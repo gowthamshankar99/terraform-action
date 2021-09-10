@@ -1,35 +1,47 @@
 name: 'twdps terraform action'
-description: 'do a couple things'
+description: 'standard terraform pipeline actions'
 inputs:
+  working-directory:
+    description: set working directory; default is .
+    required: false
+    default: '.'
   terraform-version:
-    description: use specific terraform version
+    description: use specific terraform version; default will use version on runner.
     required: false
     default: 'default'
   tf-workspace:
     description: setup terraform workspace
     required: false
     default: ''
-  tflint-version:
-    description: use specific terraform version
+  tf-var-file:
+    description: use specified tf-vars file
     required: false
-    default: 'latest'
-  tflint-provider:
-    description: tflint cloud provider
-    required: false
-    default: aws
-  working-directory:
-    description: set working directory
-    required: false
-    default: '.'
+    default: ''
   lint:
     description: run tflint
     required: false
     default: 'false'
+  tflint-version:
+    description: use specific terraform version; default will use latest
+    required: false
+    default: 'latest'
+  tflint-provider:
+    description: tflint cloud provider; default will use aws
+    required: false
+    default: aws
   init:
     description: terraform init
     required: false
     default: 'false'
-  validate-terraform-fmt:
+  init-args:
+    description: additional command line arguments for terraform init
+    required: false
+    default: ''
+  fmt-check-terraform:
+    description: validate farmating
+    required: false
+    default: 'false'
+  validate-terraform:
     description: validate farmating
     required: false
     default: 'false'
@@ -37,14 +49,26 @@ inputs:
     description: terraform plan
     required: false
     default: 'false'
+  plan-args:
+    description: additional command line arguments for terraform plan
+    required: false
+    default: ''
   apply:
     description: terraform apply
     required: false
     default: 'false'
+  apply-args:
+    description: additional command line arguments for terraform apply
+    required: false
+    default: ''
   destroy:
     description: terraform destroy
     required: false
     default: 'false'
+  destroy-args:
+    description: additional command line arguments for terraform destroy
+    required: false
+    default: ''
 outputs:
   random-number:
     description: "Random number"
@@ -52,11 +76,22 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: terraform-version
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.terraform-version }}" != "default" ]]; then
+          curl -SLO "https://releases.hashicorp.com/terraform/<< parameters.terraform-version >>/terraform_<< parameters.terraform-version >>_linux_amd64.zip" > "terraform_<< parameters.terraform-version >>_linux_amd64.zip"
+          sudo unzip -o "terraform_<< parameters.terraform-version >>_linux_amd64.zip" -d /usr/local/bin
+        fi
+        terraform version
+
     - name: lint
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         if [[ "${{ inputs.lint }}" == "true" ]]; then
+          echo "with.tflint = true"
           if [[ ! -f ".tflint.hcl" ]]; then
             echo "plugin \"${{ inputs.tflint-provider }}\" { enabled = true }" > .tflint.hcl
           else
@@ -64,4 +99,58 @@ runs:
           fi
           docker run --rm ghcr.io/terraform-linters/tflint-bundle:${{ inputs.tflint-version }} --version
           docker run --rm -v $(pwd):/data -t ghcr.io/terraform-linters/tflint-bundle:${{ inputs.tflint-version }} --loglevel=info
+        fi
+
+    - name: init
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.init }}" == "true" ]]; then
+          echo "with.init = true"
+          terraform init ${{ inputs.init-args }}
+        fi
+
+    - name: fmt-check-terraform
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.fmt-check-terraform }}" == "true" ]]; then
+          echo "with.fmt-check-terraform = true"
+          terraform fmt -write=false -check=true -diff
+        fi
+
+    - name: validate-terraform
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.validate-terraform }}" == "true" ]]; then
+          echo "with.validate-terraform = true"
+          terraform validate
+        fi
+
+    - name: plan
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.plan }}" == "true" ]]; then
+          echo "with.plan = true"
+          terraform plan ${{ inputs.tf-var-file }} ${{ inputs.plan-args }}
+        fi
+
+    - name: apply
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.apply }}" == "true" ]]; then
+          echo "with.apply = true"
+          terraform apply --auto-approve ${{ inputs.tf-var-file }} ${{ inputs.plan-args }}
+        fi
+
+    - name: destroy
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.destroy }}" == "true" ]]; then
+          echo "with.destroy = true"
+          terraform destroy --auto-approve ${{ inputs.tf-var-file }}  ${{ inputs.destroy-args }}
         fi
