@@ -62,5 +62,6 @@ runs:
           else
             echo ".tflint.hcl already exists in working directory"
           fi
-          docker run --rm -v $(pwd):/data -t ghcr.io/terraform-linters/tflint-bundle:${{ inputs.tflint-version }}
+          docker run --rm ghcr.io/terraform-linters/tflint-bundle:${{ inputs.tflint-version }} --version
+          docker run --rm -v $(pwd):/data -t ghcr.io/terraform-linters/tflint-bundle:${{ inputs.tflint-version }} --loglevel=info
         fi
