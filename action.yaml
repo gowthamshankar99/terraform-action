@@ -1,10 +1,50 @@
-name: 'twdps test'
+name: 'twdps terraform action'
 description: 'do a couple things'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
+  terraform-version:
+    description: use specific terraform version
+    required: false
+    default: 'default'
+  tf-workspace:
+    description: setup terraform workspace
+    required: false
+    default: ''
+  tflint-version:
+    description: use specific terraform version
+    required: false
+    default: 'latest'
+  tflint-provider:
+    description: tflint cloud provider
+    required: false
+    default: aws
+  working-directory:
+    description: set working directory
+    required: false
+    default: '.'
+  lint:
+    description: run tflint
+    required: false
+    default: 'false'
+  init:
+    description: terraform init
+    required: false
+    default: 'false'
+  validate-terraform-fmt:
+    description: validate farmating
+    required: false
+    default: 'false'
+  plan:
+    description: terraform plan
+    required: false
+    default: 'false'
+  apply:
+    description: terraform apply
+    required: false
+    default: 'false'
+  destroy:
+    description: terraform destroy
+    required: false
+    default: 'false'
 outputs:
   random-number:
     description: "Random number"
@@ -12,7 +52,15 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
+    - name: lint
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
-    - run: ${{ github.action_path }}/test.sh
-      shell: bash
+      run: |
+        if [[ "${{ inputs.lint }}" == "true" ]]; then
+          if [[ ! -f ".tflint.hcl" ]]; then
+            echo "plugin \"${{ inputs.tflint-provider }}\" { enabled = true }" > .tflint.hcl
+          else
+            echo ".tflint.hcl already exists in working directory"
+          fi
+          docker run --rm -v $(pwd):/data -t ghcr.io/terraform-linters/tflint-bundle:${{ inputs.tflint-version }}
+        fi
