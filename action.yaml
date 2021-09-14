@@ -5,6 +5,10 @@ inputs:
     description: set working directory; default is .
     required: false
     default: '.'
+  shell-options:
+    description: define custom shell options
+    required: false
+    default: bash
   terraform-version:
     description: use specific terraform version; default will use version on runner
     required: false
@@ -82,7 +86,7 @@ runs:
   steps:
     - name: terraform-version
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.terraform-version }}" != "default" ]]; then
           curl -SLO "https://releases.hashicorp.com/terraform/<< parameters.terraform-version >>/terraform_<< parameters.terraform-version >>_linux_amd64.zip" > "terraform_<< parameters.terraform-version >>_linux_amd64.zip"
@@ -92,7 +96,7 @@ runs:
 
     - name: terraform-cloud
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.terraform-cloud-token }}" != "false" ]]; then
           echo "with.terraform-cloud-token = true"
@@ -105,7 +109,7 @@ runs:
 
     - name: lint
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.lint }}" == "true" ]]; then
           echo "with.tflint = true"
@@ -120,7 +124,7 @@ runs:
 
     - name: init
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.init }}" == "true" ]]; then
           echo "with.init = true"
@@ -129,7 +133,7 @@ runs:
 
     - name: fmt-check-terraform
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.fmt-check-terraform }}" == "true" ]]; then
           echo "with.fmt-check-terraform = true"
@@ -138,7 +142,7 @@ runs:
 
     - name: validate-terraform
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.validate-terraform }}" == "true" ]]; then
           echo "with.validate-terraform = true"
@@ -147,7 +151,7 @@ runs:
 
     - name: plan
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.plan }}" == "true" ]]; then
           echo "with.plan = true"
@@ -156,7 +160,7 @@ runs:
 
     - name: apply
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.apply }}" == "true" ]]; then
           echo "with.apply = true"
@@ -165,7 +169,7 @@ runs:
 
     - name: destroy
       working-directory: ${{ inputs.working-directory }}
-      shell: bash
+      shell: ${{ inputs.shell-options }}
       run: |
         if [[ "${{ inputs.destroy }}" == "true" ]]; then
           echo "with.destroy = true"
