@@ -6,9 +6,13 @@ inputs:
     required: false
     default: '.'
   terraform-version:
-    description: use specific terraform version; default will use version on runner.
+    description: use specific terraform version; default will use version on runner
     required: false
     default: 'default'
+  terraform-cloud-token:
+    description: use terraform cloud as remote backend store
+    required: false
+    default: 'false'
   tf-workspace:
     description: setup terraform workspace
     required: false
@@ -85,6 +89,18 @@ runs:
           sudo unzip -o "terraform_<< parameters.terraform-version >>_linux_amd64.zip" -d /usr/local/bin
         fi
         terraform version
+
+    - name: terraform-cloud
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.terraform-cloud-token }}" != "false" ]]; then
+          echo "with.terraform-cloud-token = true"
+          cat <<EOF > ~/.terraformrc
+        credentials "app.terraform.io" {
+          token = "${{ inputs.terraform-cloud-token }}"
+        }
+        fi
 
     - name: lint
       working-directory: ${{ inputs.working-directory }}
