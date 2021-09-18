@@ -36,7 +36,7 @@ inputs:
   init:
     description: terraform init
     required: false
-    default: 'false'
+    default: 'true'
   init-args:
     description: additional command line arguments for terraform init
     required: false
