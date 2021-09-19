@@ -1,5 +1,12 @@
 name: 'twdps terraform action'
-description: 'standard terraform pipeline actions'
+description: |
+  standard terraform pipeline actions.
+
+  To use test-assume-role (AWS only feature), set the following additional ENV:
+  - AWS_ACCOUNT_ID
+  - AWS_DEFAULT_REGION
+  - AWS_ASSUME_ROLE
+
 inputs:
   working-directory:
     description: set working directory; default is .
@@ -33,14 +40,6 @@ inputs:
     description: tflint cloud provider; default will use aws
     required: false
     default: aws
-  init:
-    description: terraform init
-    required: false
-    default: 'true'
-  init-args:
-    description: additional command line arguments for terraform init
-    required: false
-    default: ''
   fmt-check-terraform:
     description: validate farmating
     required: false
@@ -49,6 +48,34 @@ inputs:
     description: validate farmating
     required: false
     default: 'false'
+  awspec-test:
+    description: run awspec tests after successful terraform apply
+    required: false
+    default: 'false'
+  awspec-test-directory:
+    description: path to awspec tests
+    required: false
+    default: 'spec'
+  inspec-test:
+    description: run inspec tests after successful terraform apply
+    required: false
+    default: 'false'
+  inspec-test-directory:
+    description: path to inspec tests
+    required: false
+    default: 'profiles'
+  test-assume-role:
+    description: assume a role before running tests
+    required: false
+    default: 'false'
+  init:
+    description: terraform init
+    required: false
+    default: 'true'
+  init-args:
+    description: additional command line arguments for terraform init
+    required: false
+    default: ''
   plan:
     description: terraform plan
     required: false
@@ -161,6 +188,36 @@ runs:
         if [[ "${{ inputs.apply }}" == "true" ]]; then
           echo "with.apply = true"
           terraform apply --auto-approve ${{ inputs.tf-var-file }} ${{ inputs.plan-args }}
+        fi
+
+    - name: awspec test
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.awspec-test }}" == "true" ]]; then
+          echo "with.awspec-test = true"
+          if [[ "${{ inputs.test-assume-role }}" != "false" ]]; then
+            aws sts assume-role --output json --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/$AWS_ASSUME_ROLE --role-session-name eks-configuration-test > credentials
+            export AWS_ACCESS_KEY_ID=$(cat credentials | jq -r ".Credentials.AccessKeyId")
+            export AWS_SECRET_ACCESS_KEY=$(cat credentials | jq -r ".Credentials.SecretAccessKey")
+            export AWS_SESSION_TOKEN=$(cat credentials | jq -r ".Credentials.SessionToken")
+          fi
+          rspec ${{ inputs.awspec-test-directory }}
+        fi
+
+    - name: inspec test
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.inspec-test }}" == "true" ]]; then
+          echo "with.inspec-test = true"
+          if [[ "${{ inputs.test-assume-role }}" != "false" ]]; then
+            aws sts assume-role --output json --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/$AWS_ASSUME_ROLE --role-session-name eks-configuration-test > credentials
+            export AWS_ACCESS_KEY_ID=$(cat credentials | jq -r ".Credentials.AccessKeyId")
+            export AWS_SECRET_ACCESS_KEY=$(cat credentials | jq -r ".Credentials.SecretAccessKey")
+            export AWS_SESSION_TOKEN=$(cat credentials | jq -r ".Credentials.SessionToken")
+          fi
+          rspec ${{ inputs.inspec-test-directory }}
         fi
 
     - name: destroy
