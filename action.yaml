@@ -7,6 +7,8 @@ description: |
   - AWS_DEFAULT_REGION
   - AWS_ASSUME_ROLE
 
+  Assumes awspec or inspec has been installed on runner.
+
 inputs:
   working-directory:
     description: set working directory; default is .
@@ -100,10 +102,6 @@ inputs:
     description: additional command line arguments for terraform destroy
     required: false
     default: ''
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
   using: "composite"
   steps:
@@ -112,8 +110,8 @@ runs:
       shell: bash
       run: |
         if [[ "${{ inputs.terraform-version }}" != "default" ]]; then
-          curl -SLO "https://releases.hashicorp.com/terraform/<< parameters.terraform-version >>/terraform_<< parameters.terraform-version >>_linux_amd64.zip" > "terraform_<< parameters.terraform-version >>_linux_amd64.zip"
-          sudo unzip -o "terraform_<< parameters.terraform-version >>_linux_amd64.zip" -d /usr/local/bin
+          curl -SLO "https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_linux_amd64.zip" > "terraform_${{ inputs.terraform-version }}_linux_amd64.zip"
+          sudo unzip -o "terraform_${{ inputs.terraform-version }}_linux_amd64.zip" -d /usr/local/bin
         fi
         terraform version
 
