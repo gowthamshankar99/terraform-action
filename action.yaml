@@ -215,7 +215,7 @@ runs:
             export AWS_SECRET_ACCESS_KEY=$(cat credentials | jq -r ".Credentials.SecretAccessKey")
             export AWS_SESSION_TOKEN=$(cat credentials | jq -r ".Credentials.SessionToken")
           fi
-          rspec ${{ inputs.inspec-test-directory }}
+          ${{ inputs.inspec-test-directory }}
         fi
 
     - name: destroy
