@@ -197,13 +197,10 @@ runs:
           export AWS_DEFAULT_REGION=${{ env.AWS_DEFAULT_REGION }}
           if [[ "${{ inputs.test-assume-role }}" != "false" ]]; then
             echo "with.test-assume-role = true"
-            echo "${{ env.AWS_ACCOUNT_ID }}"
-            echo $AWS_ACCOUNT_ID
             aws sts assume-role --output json --role-arn arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_ASSUME_ROLE }} --role-session-name eks-configuration-test > credentials
             export AWS_ACCESS_KEY_ID=$(cat credentials | jq -r ".Credentials.AccessKeyId")
             export AWS_SECRET_ACCESS_KEY=$(cat credentials | jq -r ".Credentials.SecretAccessKey")
             export AWS_SESSION_TOKEN=$(cat credentials | jq -r ".Credentials.SessionToken")
-            echo ${AWS_SESSION_TOKEN:0:5}
           fi
           rspec ${{ inputs.awspec-test-directory }}
         fi
@@ -215,7 +212,7 @@ runs:
         if [[ "${{ inputs.inspec-test }}" == "true" ]]; then
           echo "with.inspec-test = true"
           if [[ "${{ inputs.test-assume-role }}" != "false" ]]; then
-
+            echo "with.test-assume-role = true"
             aws sts assume-role --output json --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/$AWS_ASSUME_ROLE --role-session-name eks-configuration-test > credentials
             export AWS_ACCESS_KEY_ID=$(cat credentials | jq -r ".Credentials.AccessKeyId")
             export AWS_SECRET_ACCESS_KEY=$(cat credentials | jq -r ".Credentials.SecretAccessKey")
