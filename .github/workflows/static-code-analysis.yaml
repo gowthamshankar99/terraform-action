@@ -1,0 +1,17 @@
+name: Terraform static code analysis
+
+on:
+  workflow_call:
+
+jobs:
+
+  static-code-analysis:
+    name: static code analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4.1.1
+      - name: show result of repository clone
+        shell: bash
+        run: ls -la

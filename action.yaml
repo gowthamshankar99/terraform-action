@@ -1,107 +1,297 @@
 name: 'twdps terraform action'
+
 description: |
   standard terraform pipeline actions.
 
-  To use test-assume-role (AWS only feature), set the following additional ENV:
-  - AWS_ACCOUNT_ID
-  - AWS_DEFAULT_REGION
-  - AWS_ASSUME_ROLE
-
-  Assumes awspec or inspec has been installed on runner.
 
 inputs:
+
   working-directory:
     description: set working directory; default is .
     required: false
     default: '.'
+
+  static-analysis:
+    description: perform static analysis of terraform code
+    required: false
+    default: 'false'
+
+  shell:
+    description: |
+      default shell invocation. Override to support different shells or
+      tools like secrethub.io
+    type: string
+    default: /bin/bash -eo pipefail
+
+  terraform-validate:
+    description: |
+      Validate runs checks that verify whether a configuration is syntactically
+      valid, internally consistent, and canonically formatted regardless of any
+      provided variables or existing state. It is thus primarily useful for
+      general verification of reusable modules, including correctness of
+      attribute names and value types.
+    type: boolean
+    default: true
+
   terraform-version:
-    description: use specific terraform version; default will use version on runner
-    required: false
-    default: 'default'
-  terraform-cloud-token:
-    description: use terraform cloud as remote backend store
-    required: false
-    default: 'false'
-  tf-workspace:
-    description: setup terraform workspace
-    required: false
-    default: ''
-  tf-var-file:
-    description: use specified tf-vars file
-    required: false
-    default: ''
-  lint:
-    description: run tflint
-    required: false
-    default: 'false'
+    description: |
+      If you specify a specific version, it will be installed and used by
+      all orb terraform functions. Leave blank or specify version "installed"
+      to use the version already installed on the executor.
+    type: string
+    default: ""
+
+  terraform-init-additional-args:
+    description: |
+      Include any additional terraform init command arguments.
+      Default is -backend=false.
+    type: string
+    default: -backend=false
+
   tflint-version:
-    description: use specific terraform version; default will use latest
-    required: false
-    default: 'latest'
+    description: |
+      Providing a tflint version results in a tflint scan of the repo using
+      the desired version. Specify version "installed" to use the version
+      already installed on the executor.
+    type: string
+    default: ""
+
   tflint-provider:
-    description: tflint cloud provider; default will use aws
-    required: false
-    default: aws
-  fmt-check-terraform:
-    description: validate farmating
-    required: false
-    default: 'false'
-  validate-terraform:
-    description: validate farmating
-    required: false
-    default: 'false'
-  awspec-test:
-    description: run awspec tests after successful terraform apply
-    required: false
-    default: 'false'
-  awspec-test-directory:
-    description: path to awspec tests
-    required: false
-    default: 'spec'
-  inspec-test:
-    description: run inspec tests after successful terraform apply
-    required: false
-    default: 'false'
-  inspec-test-directory:
-    description: path to inspec tests
-    required: false
-    default: 'profiles'
-  test-assume-role:
-    description: assume a role before running tests
-    required: false
-    default: 'false'
-  init:
-    description: terraform init
-    required: false
-    default: 'true'
-  init-args:
-    description: additional command line arguments for terraform init
-    required: false
-    default: ''
-  plan:
-    description: terraform plan
-    required: false
-    default: 'false'
-  plan-args:
-    description: additional command line arguments for terraform plan
-    required: false
-    default: ''
-  apply:
-    description: terraform apply
-    required: false
-    default: 'false'
-  apply-args:
-    description: additional command line arguments for terraform apply
-    required: false
-    default: ''
-  destroy:
-    description: terraform destroy
-    required: false
-    default: 'false'
-  destroy-args:
-    description: additional command line arguments for terraform destroy
-    required: false
-    default: ''
+    description: |
+      Specify a cloud provider to use for tflint rulesets. "aws", "azurerm",
+      "google" are the supported providers. Specifying a selection will
+      result in a matching .tflint.hcl configuration being created. This
+      option will not do anything if a .tflint.hcl file already exists
+      within the repo. If you include a custom configuration file you must
+      manage the provider plugin settings yourself. If you specify a
+      provider and also use additional-commands to define a custom
+      .tflint.hcl filename, this will result in .tflint.hcl and you
+      customer file both existing.
+    type: enum
+    enum: ["aws", "azurerm", "google", ""]
+    default: ""
+
+  tflint-additional-args:
+    description: |
+      Include any additional tflint commandline arguments. Note: not all
+      options can be successfully used in a pipeline.
+    type: string
+    default: ""
+
+  tfsec-version:
+    description: |
+      Providing a tflint version results in a tfsec scan of the repo using
+      the desired version. Specify version "installed" to use the version
+      already installed on the executor.
+    type: string
+    default: ""
+
+  tfsec-additional-args:
+    description: |
+      Include any additional tfsec commandline arguments. Note: not all
+      options have been tested in pipeline setting.
+    type: string
+    default: ""
+
+  snyk-version:
+    description: |
+      Providing a tflint version results in a snyk scan of the repo using
+      the desired version. Specify version "installed" to use the version
+      already installed on the executor.
+    type: string
+    default: ""
+
+  snyk-token:
+    description: |
+      Name of env var containing your Snyk API token. Default is SNYK_TOKEN.
+    type: env_var_name
+    default: SNYK_TOKEN
+
+  snyk-organization:
+    description: Snyk organization to reference.
+    type: string
+    default: ""
+
+  snyk-additional-args:
+    description: Optional additional flags to be passed to Snyk IaC.
+    type: string
+    default: ""
+
+  checkov-version:
+    description: |
+      Providing a tflint version results in a checkov scan of the repo using
+      the desired version. Specify version "installed" to use the version
+      already installed on the executor.
+    type: string
+    default: ""
+
+  checkov-additional-args:
+    description: optional additional flags to be passed to checkov
+    type: string
+    default: ""
+
+  terrascan-version:
+    description: |
+      Providing a tflint version results in a terrascan scan of the repo using
+      the desired version. Specify version "installed" to use the version
+      already installed on the executor.
+    type: string
+    default: ""
+
+  terrascan-init-args:
+    description: Provide custom init command flags.
+    type: string
+    default: ""
+
+  terrascan-iac-type:
+    description: terrascan iac provider types.
+    type: enum
+    enum: ["arm", "cft", "docker", "helm", "k8s", "kustomize", "terraform", "tfplan", ""]
+    default: ""
+
+  terrascan-policy-type:
+    description: terrascan preset policy types. Default is all.
+    type: enum
+    enum: ["all", "aws", "azure", "docker", "gcp", "github", "k8s"]
+    default: "all"
+
+  terrascan-custom-scan-args:
+    description: |
+      Override default settings with any valid terrascan scan flags.
+    type: string
+    default: ""
+
+  driftctl-version:
+    description: |
+      Providing a tflint version results in a driftctl scan of the repo using
+      the desired version. Specify version "installed" to use the version
+      already installed on the executor.
+    type: string
+    default: ""
+
+  driftctl-additional-args:
+    description: Provide flag options to scan command.
+    type: string
+    default: ""
+
+  infracost-version:
+    description: |
+      Providing a tflint version results in a infracost scan of the repo using
+      the desired version. Specify version "installed" to use the version
+      already installed on the executor.
+    type: string
+    default: ""
+
+  infracost-api-key:
+    description: organization api key
+    type: env_var_name
+    default: INFRACOST_API_KEY
+
+  infracost-additional-args:
+    description: Provide flag options to scan command.
+    type: string
+    default: ""
+
+  before-static-analysis:
+    description: Optional steps to run before running static analysis
+    type: steps
+    default: []
+
+  after-static-analysis:
+    description: Optional steps to run after running static analysis
+    type: steps
+    default: []
+
+
+  # terraform-version:
+  #   description: use specific terraform version; default will use version on runner
+  #   required: false
+  #   default: 'default'
+  # terraform-cloud-token:
+  #   description: use terraform cloud as remote backend store
+  #   required: false
+  #   default: 'false'
+  # tf-workspace:
+  #   description: setup terraform workspace
+  #   required: false
+  #   default: ''
+  # tf-var-file:
+  #   description: use specified tf-vars file
+  #   required: false
+  #   default: ''
+  # lint:
+  #   description: run tflint
+  #   required: false
+  #   default: 'false'
+  # tflint-version:
+  #   description: use specific terraform version; default will use latest
+  #   required: false
+  #   default: 'latest'
+  # tflint-provider:
+  #   description: tflint cloud provider; default will use aws
+  #   required: false
+  #   default: aws
+  # fmt-check-terraform:
+  #   description: validate farmating
+  #   required: false
+  #   default: 'false'
+  # validate-terraform:
+  #   description: validate farmating
+  #   required: false
+  #   default: 'false'
+  # awspec-test:
+  #   description: run awspec tests after successful terraform apply
+  #   required: false
+  #   default: 'false'
+  # awspec-test-directory:
+  #   description: path to awspec tests
+  #   required: false
+  #   default: 'spec'
+  # inspec-test:
+  #   description: run inspec tests after successful terraform apply
+  #   required: false
+  #   default: 'false'
+  # inspec-test-directory:
+  #   description: path to inspec tests
+  #   required: false
+  #   default: 'profiles'
+  # test-assume-role:
+  #   description: assume a role before running tests
+  #   required: false
+  #   default: 'false'
+  # init:
+  #   description: terraform init
+  #   required: false
+  #   default: 'true'
+  # init-args:
+  #   description: additional command line arguments for terraform init
+  #   required: false
+  #   default: ''
+  # plan:
+  #   description: terraform plan
+  #   required: false
+  #   default: 'false'
+  # plan-args:
+  #   description: additional command line arguments for terraform plan
+  #   required: false
+  #   default: ''
+  # apply:
+  #   description: terraform apply
+  #   required: false
+  #   default: 'false'
+  # apply-args:
+  #   description: additional command line arguments for terraform apply
+  #   required: false
+  #   default: ''
+  # destroy:
+  #   description: terraform destroy
+  #   required: false
+  #   default: 'false'
+  # destroy-args:
+  #   description: additional command line arguments for terraform destroy
+  #   required: false
+  #   default: ''
+
 runs:
   using: "composite"
   steps:
