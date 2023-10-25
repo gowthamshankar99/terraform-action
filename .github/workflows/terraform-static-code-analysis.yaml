@@ -35,7 +35,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4.1.1
       - name: install packages
-        uses:  ThoughtWorks-DPS/terraform-action/.github/actions/packages
+        uses:  ThoughtWorks-DPS/terraform-action/packages@main
         with:
           working-directory: ${{ inputs.working-directory }}
           terraform-version: ${{ inputs.terraform-version }}
