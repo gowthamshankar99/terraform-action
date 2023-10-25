@@ -1,7 +1,20 @@
-name: Terraform static code analysis
+run-name: Terraform static code analysis
 
 on:
   workflow_call:
+
+    inputs:
+
+       working-directory:
+        description: set working directory; default is .
+        required: false
+        type: string
+        default: .
+
+      testcommand:
+        description: see if i can pass commands to run scripts or inline bash
+        required: false
+        type:
 
 jobs:
 
@@ -13,5 +26,14 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4.1.1
       - name: show result of repository clone
+        working-directory: ${{ inputs.working-directory }}
         shell: bash
-        run: ls -la
+        run: ${{ inputs.testcommand }}
+
+
+      # - name: configure shared pipeline job environment
+      #   uses: ./.github/actions/setup-pipeline-env
+      #   with:
+      #     secrethub-creds: ${{ secrets.SECRETHUB_CREDENTIAL }}
+      #     tfvar-env: gha-sandbox
+      # echo "action_state=yellow" >> "$GITHUB_ENV"
