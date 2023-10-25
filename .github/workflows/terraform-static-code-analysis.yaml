@@ -24,7 +24,7 @@ on:
         description: Optional steps to run before running static analysis
         required: false
         type: string
-        default: ""
+        default: echo "none"
 
 jobs:
 
@@ -42,8 +42,7 @@ jobs:
           working-directory: ${{ inputs.working-directory }}
           terraform-version: ${{ inputs.terraform-version }}
 
-      - if: ${{ inputs.working-directory }} == "bob"
-        name: run custom before-analysis scripts
+      - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
         shell: bash
         run: ${{ inputs.before-static-analysis }}
