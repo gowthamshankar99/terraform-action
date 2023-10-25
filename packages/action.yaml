@@ -1,5 +1,10 @@
 name: 'runner and environment setup for lab-platform-eks-ghactions pipeline'
+
 description: Manage terraform action related packages
+
+branding:
+    icon: 'download'
+    color: 'green'
 
 inputs:
 
@@ -15,6 +20,7 @@ inputs:
 
 runs:
   using: "composite"
+  
   steps:
 
     - name: install terraform version ${{ inputs.terraform-version }}
@@ -62,13 +68,3 @@ runs:
           sudo unzip -o "terraform_${{ inputs.terraform-version }}_linux_amd64.zip" -d /usr/local/bin
           terraform version
         fi
-
-#    # for actions     
-# branding:
-#   icon: 'arrow-right-circle'
-#   color: 'gray-dark'
-
-
-        #!/usr/bin/env bash
-
-

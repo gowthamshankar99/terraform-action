@@ -26,6 +26,12 @@ on:
         type: string
         default: echo "none"
 
+      after-static-analysis:
+        description: Optional steps to run before after static analysis
+        required: false
+        type: string
+        default: echo "none"
+
 jobs:
 
   static-code-analysis:
@@ -47,10 +53,23 @@ jobs:
         shell: bash
         run: ${{ inputs.before-static-analysis }}
 
+# terraform init
+# terraform validate (validtae, fmt check)
+# tflint
+# tfsec (none plan output)
+# checkov (none plan output)
+# snyk iac
+# terrascan
+# driftctl
+# infracost
 
-      # - name: configure shared pipeline job environment
-      #   uses: ./.github/actions/setup-pipeline-env
-      #   with:
-      #     secrethub-creds: ${{ secrets.SECRETHUB_CREDENTIAL }}
-      #     tfvar-env: gha-sandbox
+
+      - name: run custom after-analysis scripts
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        run: ${{ inputs.after-static-analysis }}
+
+
+
+
       # echo "action_state=yellow" >> "$GITHUB_ENV"
