@@ -43,7 +43,7 @@ jobs:
           terraform-version: ${{ inputs.terraform-version }}
 
       - name: run custom before-analysis scripts
-        if: ${{ inputs.before-static-analysis }} ~= ""
+        if: ${{ inputs.working-directory }} != "."
         working-directory: ${{ inputs.working-directory }}
         shell: bash
         run: ${{ inputs.before-static-analysis }}
