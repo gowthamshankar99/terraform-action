@@ -20,6 +20,14 @@ on:
         type: string
         default: ""
 
+      terraform-init-additional-args:
+        description: |
+          Include any additional terraform init command arguments.
+          Default is -backend=false.
+        required: false
+        type: string
+        default: -backend=false
+
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
@@ -52,6 +60,15 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         shell: bash
         run: ${{ inputs.before-static-analysis }}
+
+      - name: terraform init
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        run: |
+          terraform version
+          terraform init ${{ inputs.terraform-init-additional-args }}
+
+
 
 # terraform init
 # terraform validate (validtae, fmt check)

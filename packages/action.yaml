@@ -2,10 +2,6 @@ name: 'runner and environment setup for lab-platform-eks-ghactions pipeline'
 
 description: Manage terraform action related packages
 
-branding:
-    icon: 'download'
-    color: 'green'
-
 inputs:
 
   working-directory:
