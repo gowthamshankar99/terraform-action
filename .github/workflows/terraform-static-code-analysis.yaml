@@ -63,7 +63,6 @@ jobs:
 # driftctl
 # infracost
 
-
       - name: run custom after-analysis scripts
         working-directory: ${{ inputs.working-directory }}
         shell: bash
