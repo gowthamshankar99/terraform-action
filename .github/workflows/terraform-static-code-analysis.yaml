@@ -42,15 +42,15 @@ on:
 
 jobs:
 
-  static-code-analysis:
-    name: static code analysis
+  terraform-static-code-analysis:
+    name: terraform static code analysis
     runs-on: ubuntu-latest
 
     steps:
       - name: checkout code
         uses: actions/checkout@v4.1.1
 
-      - name: install packages
+      - name: install terraform workflow packages
         uses:  ThoughtWorks-DPS/terraform-action/packages@main
         with:
           working-directory: ${{ inputs.working-directory }}

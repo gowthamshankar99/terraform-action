@@ -1,6 +1,6 @@
-name: 'runner and environment setup for lab-platform-eks-ghactions pipeline'
+name: packages
 
-description: Manage terraform action related packages
+description: Install packages for terraform-action@workflows
 
 inputs:
 
