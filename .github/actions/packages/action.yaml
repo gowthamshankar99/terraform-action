@@ -1,0 +1,74 @@
+name: 'runner and environment setup for lab-platform-eks-ghactions pipeline'
+description: Manage terraform action related packages
+
+inputs:
+
+  working-directory:
+    description: set working directory; default is .
+    required: false
+    default: .
+
+  terraform-version:
+    description: Specify terraform version
+    required: true
+    default: installed
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: install terraform version ${{ inputs.terraform-version }}
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.terraform-version }}" != "installed" ]]; then
+
+          # download and import HashiCorp public key
+          curl --remote-name https://keybase.io/hashicorp/pgp_keys.asc
+          if result=$(gpg --import pgp_keys.asc 2>&1); then
+            echo "loaded HashiCorp public key"
+          else
+              echo "Unable to import HashiCorp key"
+              echo "GPG Output:"
+              echo "$result"
+          fi
+
+          # download terraform installation packages
+          curl --remote-name "https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_linux_amd64.zip"
+          curl --remote-name "https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_SHA256SUMS"
+          curl --remote-name "https://releases.hashicorp.com/terraform/${{ inputs.terraform-version }}/terraform_${{ inputs.terraform-version }}_SHA256SUMS.sig"
+
+          # verify SHA signature
+          if result=$(gpg --verify "terraform_${{ inputs.terraform-version }}_SHA256SUMS.sig" "terraform_${{ inputs.terraform-version }}_SHA256SUMS" 2>&1); then
+              echo "Verified SHA signature"
+          else
+              echo "Unable to verify SHA signature"
+              echo "GPG Output:"
+              echo "$result"
+              exit 1
+          fi
+
+          # verify terraform cli package
+          if result=$(shasum --ignore-missing --algorithm 256 --check "terraform_${{ inputs.terraform-version }}_SHA256SUMS" 2>&1); then
+              echo "Verified terraform package"
+          else
+              echo "Unable to verify terraform package"
+              echo "shasum Output:"
+              echo "$result"
+              exit 1
+          fi
+
+          # install and smoke test terraform cli
+          sudo unzip -o "terraform_${{ inputs.terraform-version }}_linux_amd64.zip" -d /usr/local/bin
+          terraform version
+        fi
+
+#    # for actions     
+# branding:
+#   icon: 'arrow-right-circle'
+#   color: 'gray-dark'
+
+
+        #!/usr/bin/env bash
+
+
