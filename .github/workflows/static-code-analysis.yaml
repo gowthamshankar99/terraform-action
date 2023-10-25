@@ -5,7 +5,7 @@ on:
 
     inputs:
 
-       working-directory:
+      working-directory:
         description: set working directory; default is .
         required: false
         type: string
@@ -14,7 +14,7 @@ on:
       testcommand:
         description: see if i can pass commands to run scripts or inline bash
         required: false
-        type:
+        type: string
 
 jobs:
 
