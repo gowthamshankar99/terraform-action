@@ -29,6 +29,15 @@ on:
         type: string
         default: -backend=false
 
+      tflint-version:
+        description: |
+          Providing a tflint version results in a tflint scan of the repo using
+          the desired version. Specify version "installed" to use the version
+          already installed on the executor.
+        required: false
+        type: string
+        default: ""
+
       tflint-provider:
         description: provider for tflint plugin
         required: true
@@ -70,6 +79,7 @@ jobs:
         with:
           working-directory: ${{ inputs.working-directory }}
           terraform-version: ${{ inputs.terraform-version }}
+          tflint-version: ${{ inputs.tflint-version }}
 
       - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
@@ -93,7 +103,8 @@ jobs:
         shell: bash
         run: terraform validate
 
-      - name: perform tflint scan of terraform source files
+      - if: ${{ inputs.tflint-version }} != ""
+        name: perform tflint scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/tflint@main
         with:
           working-directory: ${{ inputs.working-directory }}
