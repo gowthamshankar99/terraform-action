@@ -85,7 +85,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        if [[ "${{ inputs.tflin-version }}" != "installed" ]]; then
+        if [[ "${{ inputs.tflint-version }}" != "installed" ]]; then
           # download tflint and verification packages
           curl -SLO "https://github.com/terraform-linters/tflint/releases/download/v${{ inputs.tflin-version }}/tflint_linux_amd64.zip"
           curl -SLO "https://github.com/terraform-linters/tflint/releases/download/v${{ inputs.tflin-version }}/checksums.txt"
