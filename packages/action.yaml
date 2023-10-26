@@ -10,20 +10,30 @@ inputs:
     required: false
     default: .
 
+  cosign-version:
+    description: Specify cosign version
+    required: false
+    default: installed
+
   terraform-version:
     description: Specify terraform version
-    required: true
+    required: false
     default: installed
 
   tflint-version:
     description: Specify tflint version
-    required: true
+    required: false
     default: installed
 
 runs:
   using: "composite"
   
   steps:
+    - if: ${{ inputs.cosign-version }} != "installed"
+      name: install cosign version ${{ inputs.cosign-version }}
+      uses: sigstore/cosign-installer@main
+      with:
+        cosign-release: ${{ inputs.cosign-version }}
 
     - name: install terraform version ${{ inputs.terraform-version }}
       working-directory: ${{ inputs.working-directory }}
