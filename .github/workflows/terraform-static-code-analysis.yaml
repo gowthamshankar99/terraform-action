@@ -12,6 +12,12 @@ on:
         type: string
         default: .
 
+      cosign-version:
+        description: Specify cosign version
+        required: false
+        type: string
+        default: installed
+
       terraform-version:
         description: |
           If you specify a specific version, it will be installed and used by
