@@ -68,9 +68,17 @@ jobs:
           terraform version
           terraform init ${{ inputs.terraform-init-additional-args }}
 
+      - name: evaluate canonical format of terraform files 
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        run: terraform fmt -check=false
+        
+      - name: validate terraform syntax
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        run: terraform validate
 
 
-# terraform init
 # terraform validate (validtae, fmt check)
 # tflint
 # tfsec (none plan output)
