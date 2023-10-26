@@ -33,7 +33,7 @@ runs:
       name: install cosign version ${{ inputs.cosign-version }}
       uses: sigstore/cosign-installer@main
       with:
-        cosign-release: ${{ inputs.cosign-version }}
+        cosign-release: v${{ inputs.cosign-version }}
 
     - name: install terraform version ${{ inputs.terraform-version }}
       working-directory: ${{ inputs.working-directory }}
