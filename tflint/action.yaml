@@ -34,6 +34,11 @@ runs:
 
   steps:
 
+    - uses: actions/cache@v3
+      name: Cache plugin dir
+      with:
+        path: ~/.tflint.d/plugins
+        key: tflint
     # - name: set tflint provider unless custom configuration file is present
     #   working-directory: ${{ inputs.working-directory }}
     #   shell: bash
