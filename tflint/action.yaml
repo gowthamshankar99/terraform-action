@@ -1,0 +1,53 @@
+# yamllint disable rule:line-length
+---
+name: tflint
+
+description: |
+  Run terraform-linters/tflint in working-directory.
+
+  Overrides available:
+  - generates a .tflint.hcl config file to support the tflint-provider specified.
+  - You can fully manage configuration by maintaining .tflint.hcl in your repo.
+  - if you include a .tflint.hcl file, you must specify a provider; e.g., plugin "aws" { enabled = true }.
+
+inputs:
+
+  working-directory:
+    description: specific folder in which to run the commands
+    required: false
+    default: "."
+
+  tflint-provider:
+    description: provider for tflint plugin
+    required: true
+    default: aws
+
+  tflint-additional-args:
+    description: |
+      Include any additional tflint commandline arguments. Note: not all
+      options can be successfully used in a pipeline.
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: set tflint provider unless custom configuration file is present
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ ! -f ".tflint.hcl" ]]; then
+          echo "plugin \"${{ inputs.tflint-provider }}\" { enabled = true }" > .tflint.hcl
+        else
+          echo "Provider not defined because .tflint.hcl already exists in working directory"
+        fi
+
+    - name: tflint scan of terraform files
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        tflint --version
+        tflint --init
+        tflint ${{ inputs.tflint-additional-args }}

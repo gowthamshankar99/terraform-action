@@ -1,3 +1,4 @@
+---
 run-name: Terraform static code analysis
 
 on:
@@ -28,6 +29,20 @@ on:
         type: string
         default: -backend=false
 
+      tflint-provider:
+        description: provider for tflint plugin
+        required: true
+        type: string
+        default: aws
+
+      tflint-additional-args:
+        description: |
+          Include any additional tflint commandline arguments. Note: not all
+          options can be successfully used in a pipeline.
+        required: false
+        type: string
+        default: ""
+    
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
@@ -72,14 +87,20 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         shell: bash
         run: terraform fmt -check=false
-        
+
       - name: validate terraform syntax
         working-directory: ${{ inputs.working-directory }}
         shell: bash
         run: terraform validate
 
+      - name: perform tflint scan of terraform source files
+        uses:  ThoughtWorks-DPS/terraform-action/tflint@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          tflint-provider: ${{ inputs.tflint-provider }}
+          tflint-additional-args: ${{ inputs.tflint-additional-args }}
 
-# terraform validate (validtae, fmt check)
+
 # tflint
 # tfsec (none plan output)
 # checkov (none plan output)
