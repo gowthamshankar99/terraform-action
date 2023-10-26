@@ -39,7 +39,12 @@ runs:
       shell: bash
       run: |
         if [[ ! -f ".tflint.hcl" ]]; then
-          echo "plugin \"${{ inputs.tflint-provider }}\" { enabled = true }" > .tflint.hcl
+          cat <<EOF > .tflint.hcl
+          plugin "${{ inputs.tflint-provider }}" {
+              enabled = true
+              source  = "github.com/terraform-linters/tflint-ruleset-${{ inputs.tflint-provider }}"
+          }
+          EOF
           cat .tflint.hcl
         else
           echo "Provider not defined because .tflint.hcl already exists in working directory"
