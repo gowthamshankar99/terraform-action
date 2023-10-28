@@ -44,7 +44,7 @@ runs:
       run: |
         #!/bin/bash
         install_provider_plugin() {
-          cat <<EOF
+          cat <<\EOF
           plugin "${{ inputs.tflint-provider }}" {
             enabled = true
             version = "${{ inputs.tflint-provider-version }}"
