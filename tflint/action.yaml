@@ -17,8 +17,13 @@ inputs:
     required: false
     default: "."
 
-  tflint-plugins:
-    description: Contents of .tflint.hcl file.
+  tflint-provider:
+    description: f
+    required: false
+    default: ""
+
+  tflint-provider-version:
+    description: f
     required: false
     default: ""
 
@@ -37,9 +42,17 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        if [[ "${{ inputs.tflint-plugins }}" != "" ]]
-          echo ${{ inputs.tflint-plugins }} > .tflint.hcl
-        fi
+        #!/bin/bash
+        provider_plugin() {
+          cat <<EOF
+          plugin "${{ inputs.tflint-provider }}" {
+            enabled = true
+            version = "${{ inputs.tflint-provider-version }}"
+            source = "github.com/terraform-linters/tflint-ruleset-${{ inputs.tflint-provider }}"
+          }
+          EOF
+        }
+
         tflint --version
         tflint --init
         tflint ${{ inputs.tflint-additional-args }}

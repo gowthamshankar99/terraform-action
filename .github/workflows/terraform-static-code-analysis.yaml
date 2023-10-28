@@ -44,8 +44,14 @@ on:
         type: string
         default: ""
 
-      tflint-plugins:
-        description: Specify contents of .tflint.hcl
+      tflint-provider:
+        description: Cloud provider. aws, google, or azurerm
+        required: false
+        type: string
+        default: ""
+
+      tflint-provider-version:
+        description: Provider plugin version.
         required: false
         type: string
         default: ""
@@ -87,7 +93,6 @@ jobs:
           cosign-version: ${{ inputs.cosign-version }}
           terraform-version: ${{ inputs.terraform-version }}
           tflint-version: ${{ inputs.tflint-version }}
-          tflint-plugins: ${{ inputs.tflint-plugins }}
 
       - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
@@ -116,7 +121,8 @@ jobs:
         uses:  ThoughtWorks-DPS/terraform-action/tflint@main
         with:
           working-directory: ${{ inputs.working-directory }}
-          tflint-plugins: ${{ inputs.tflint-plugins }}
+          tflint-provider: ${{ inputs.tflint-provider }}
+          tflint-provider-version: ${{ inputs.tflint-provider-version }}
           tflint-additional-args: ${{ inputs.tflint-additional-args }}
 
 
