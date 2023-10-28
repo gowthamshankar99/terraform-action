@@ -241,6 +241,6 @@ runs:
       run: |
         #!/bin/bash
         if [[ "${{ inputs.checkov-version }}" != "installed" ]]; then
-          sudo pip install --no-cache-dir --break-system-packages checkov==${{ inputs.checkov-version }}
+          sudo pip install --no-cache-dir checkov==${{ inputs.checkov-version }}
           checkov --version
         fi
