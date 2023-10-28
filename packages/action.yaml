@@ -25,6 +25,11 @@ inputs:
     required: false
     default: installed
 
+  tflint-plugins:
+    description: Specify contents of .tflint.hcl
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   
@@ -114,23 +119,12 @@ runs:
 
           # install and smoke test tflint
           sudo unzip -o tflint_linux_amd64.zip -d /usr/local/bin
-          if [[ ! -f ".tflint.hcl" ]]; then
-            cat <<EOF > .tflint.hcl
-        plugin "aws" {
-          enabled = true
-          source = "github.com/terraform-linters/tflint-ruleset-aws"
-        }
-        plugin "google" {
-          enabled = true
-          source = "github.com/terraform-linters/tflint-ruleset-google"
-        }
-        plugin "azurerm" {
-          enabled = true
-          source = "github.com/terraform-linters/tflint-ruleset-azurerm"
-        }
-        EOF
+
+          if [[ ${{ inputs.tflint-version }} != "" ]]; then
+            echo ${{ inputs.tflint-version }} > .tflint.hcl
           fi
           tflint --version
           tflint --init
+          cat .tflint.hcl
           ls -la /home/runner/.tflint.d/plugins
         fi

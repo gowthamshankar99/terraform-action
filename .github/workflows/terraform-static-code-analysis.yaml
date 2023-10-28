@@ -44,11 +44,11 @@ on:
         type: string
         default: ""
 
-      tflint-provider:
-        description: provider for tflint plugin
+      tflint-plugins:
+        description: Specify contents of .tflint.hcl
         required: false
         type: string
-        default: aws
+        default: ""
 
       tflint-additional-args:
         description: |
@@ -87,6 +87,7 @@ jobs:
           cosign-version: ${{ inputs.cosign-version }}
           terraform-version: ${{ inputs.terraform-version }}
           tflint-version: ${{ inputs.tflint-version }}
+          tflint-plugins: ${{ inputs.tflint-plugins }}
 
       - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
