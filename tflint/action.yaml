@@ -44,13 +44,13 @@ runs:
       run: |
         #!/bin/bash
         install_provider_plugin() {
-          cat <<\EOF
+          cat <<- EOD
           plugin "${{ inputs.tflint-provider }}" {
             enabled = true
             version = "${{ inputs.tflint-provider-version }}"
             source = "github.com/terraform-linters/tflint-ruleset-${{ inputs.tflint-provider }}"
           }
-          EOF
+        EOD
         }
 
         install_provider_plugin
