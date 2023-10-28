@@ -44,7 +44,7 @@ runs:
       run: |
         #!/bin/bash
         install_provider_plugin() {
-          cat <<- EOD
+          cat <<- EOD > .tflint.hcl
           plugin "${{ inputs.tflint-provider }}" {
             enabled = true
             version = "${{ inputs.tflint-provider-version }}"
