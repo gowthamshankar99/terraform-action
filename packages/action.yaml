@@ -197,16 +197,16 @@ runs:
           curl -SLO "https://github.com/aquasecurity/tfsec/releases/download/v${{ inputs.tfsec-version }}/tfsec-linux-amd64.D66B222A3EA4C25D5D1A097FC34ACEFB46EC39CE.sig"
           curl -SLO "https://github.com/aquasecurity/tfsec/releases/download/v${{ inputs.tfsec-version }}/tfsec_checksums.txt"
           grep tfsec-linux-amd64 < tfsec_checksums.txt > checksums.txt
-          install_public_key
+          # install_public_key
 
           # import public key
-          if result=$(gpg --import tfsec.key 2>&1); then
-            echo "loaded aquasec/tfsec public key"
-          else
-              echo "Unable to import aquasec/tfsec public key"
-              echo "GPG Output:"
-              echo "$result"
-          fi
+          # if result=$(gpg --import tfsec.key 2>&1); then
+          #   echo "loaded aquasec/tfsec public key"
+          # else
+          #     echo "Unable to import aquasec/tfsec public key"
+          #     echo "GPG Output:"
+          #     echo "$result"
+          # fi
 
           # verify tfsec package signature
           if result=$(gpg --verify tfsec-linux-amd64.D66B222A3EA4C25D5D1A097FC34ACEFB46EC39CE.sig tfsec-linux-amd64 2>&1); then
