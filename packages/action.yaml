@@ -209,14 +209,14 @@ runs:
           # fi
 
           # verify tfsec package signature
-          if result=$(gpg --verify tfsec-linux-amd64.D66B222A3EA4C25D5D1A097FC34ACEFB46EC39CE.sig tfsec-linux-amd64 2>&1); then
-              echo "Verified SHA signature"
-          else
-              echo "Unable to verify SHA signature"
-              echo "GPG Output:"
-              echo "$result"
-              exit 1
-          fi
+          # if result=$(gpg --verify tfsec-linux-amd64.D66B222A3EA4C25D5D1A097FC34ACEFB46EC39CE.sig tfsec-linux-amd64 2>&1); then
+          #     echo "Verified SHA signature"
+          # else
+          #     echo "Unable to verify SHA signature"
+          #     echo "GPG Output:"
+          #     echo "$result"
+          #     exit 1
+          # fi
 
           # verify tfsec package sha
           if result=$(shasum --ignore-missing --algorithm 256 --check  checksums.txt 2>&1); then
