@@ -132,4 +132,5 @@ runs:
           fi
           tflint --version
           tflint --init
+          ls -la /home/runner/.tflint.d/plugins
         fi
