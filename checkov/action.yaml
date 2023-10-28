@@ -33,7 +33,7 @@ runs:
       run: |
         #!/bin/bash
         checkov --version
-        if [[ ${{ inputs.terraform-plan-outfile }} != "" ]]; then
+        if [[ "${{ inputs.terraform-plan-outfile }}" != "" ]]; then
           checkov -f ${{ inputs.terraform-plan-outfile }} ${{ inputs.checkov-additional-args }}
         else
           checkov ${{ inputs.checkov-additional-args }}
