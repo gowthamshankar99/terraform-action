@@ -37,7 +37,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        if [[ ${{ inputs.tflint-plugins }} != "" ]]
+        if [[ "${{ inputs.tflint-plugins }}" != "" ]]
           echo ${{ inputs.tflint-plugins }} > .tflint.hcl
         fi
         tflint --version
