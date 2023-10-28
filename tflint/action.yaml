@@ -17,10 +17,10 @@ inputs:
     required: false
     default: "."
 
-  tflint-provider:
-    description: provider for tflint plugin
-    required: true
-    default: aws
+  tflint-plugins:
+    description: Contents of .tflint.hcl file.
+    required: false
+    default: ""
 
   tflint-additional-args:
     description: |
@@ -37,6 +37,9 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
+        if [[ ${{ inputs.tflint-plugins }} != "" ]]
+          echo ${{ inputs.tflint-plugins }} > .tflint.hcl
+        fi
         tflint --version
         tflint --init
         tflint ${{ inputs.tflint-additional-args }}
