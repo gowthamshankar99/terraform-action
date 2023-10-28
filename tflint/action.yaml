@@ -43,7 +43,7 @@ runs:
       shell: bash
       run: |
         #!/bin/bash
-        provider_plugin() {
+        install_provider_plugin() {
           cat <<EOF
           plugin "${{ inputs.tflint-provider }}" {
             enabled = true
@@ -53,6 +53,7 @@ runs:
           EOF
         }
 
+        install_provider_plugin
         tflint --version
         tflint --init
         tflint ${{ inputs.tflint-additional-args }}
