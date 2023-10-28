@@ -37,8 +37,7 @@ on:
 
       tflint-version:
         description: |
-          Providing a tflint version results in a tflint scan of the repo using
-          the desired version. Specify version "installed" to use the version
+          Perform tflint scan of terraform files. Specify version "installed" to use the version
           already installed on the executor.
         required: false
         type: string
@@ -63,7 +62,37 @@ on:
         required: false
         type: string
         default: ""
-    
+
+      tfsec-version:
+        description: |
+          Perform tfsec scan of terraform files. Specify version "installed" to use the version
+          already installed on the executor.
+        required: false
+        type: string
+        default: ""
+
+      tfsec-additional-args:
+        description: |
+          Include any additional tfsec commandline arguments.
+        required: false
+        type: string
+        default: ""
+
+      checkov-version:
+        description: |
+          Perform checkov scan of terraform files without plan output. Specify
+          version "installed" to use the version already installed on the executor.
+        required: false
+        type: string
+        default: ""
+
+      checkov-additional-args:
+        description: |
+          Include any additional checkov commandline arguments.
+        required: false
+        type: string
+        default: ""
+
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
@@ -125,10 +154,21 @@ jobs:
           tflint-provider-version: ${{ inputs.tflint-provider-version }}
           tflint-additional-args: ${{ inputs.tflint-additional-args }}
 
+      - if: ${{ inputs.tfsec-version }} != ""
+        name: perform tfsec scan of terraform source files
+        uses:  ThoughtWorks-DPS/terraform-action/tfsec@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          tfsec-additional-args: ${{ inputs.tfsec-additional-args }}
 
-# tflint
-# tfsec (none plan output)
-# checkov (none plan output)
+      - if: ${{ inputs.checkov-version }} != ""
+        name: perform checkov scan of terraform source files
+        uses:  ThoughtWorks-DPS/terraform-action/checkov@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          checkov-additional-args: ${{ inputs.checkov-additional-args }}
+
+
 # snyk iac
 # terrascan
 # driftctl

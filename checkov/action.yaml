@@ -1,0 +1,42 @@
+# yamllint disable rule:line-length
+---
+name: checkov
+
+description: |
+  Run checkov scan in working-directory.
+
+inputs:
+
+  working-directory:
+    description: specific folder in which to run the commands
+    required: false
+    default: "."
+
+  terraform-plan-outfile:
+    description: specify terraform plan output file for targeted scan
+    required: false
+    default: ""
+
+  checkov-additional-args:
+    description: |
+      Include any additional tfsec commandline arguments.
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: checkov scan of terraform files
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        #!/bin/bash
+        checkov --version
+        if [[ ${{ inputs.terraform-plan-outfile }} != "" ]]; then
+          checkov -f ${{ inputs.terraform-plan-outfile }} ${{ inputs.checkov-additional-args }}
+        else
+          checkov ${{ inputs.checkov-additional-args }}
+        fi
+        checkov --version
+        checkov ${{ inputs.checkov-additional-args }}

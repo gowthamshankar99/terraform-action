@@ -1,0 +1,31 @@
+# yamllint disable rule:line-length
+---
+name: tfsec
+
+description: |
+  Run tfsec scan in working-directory.
+
+inputs:
+
+  working-directory:
+    description: specific folder in which to run the commands
+    required: false
+    default: "."
+
+  tfsec-additional-args:
+    description: |
+      Include any additional tfsec commandline arguments.
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: tfsec scan of terraform files
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        #!/bin/bash
+        tfsec --version
+        tfsec ${{ inputs.tfsec-additional-args }}
