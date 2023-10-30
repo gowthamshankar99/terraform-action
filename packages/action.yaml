@@ -40,6 +40,11 @@ inputs:
     required: false
     default: ""
 
+  terrascan-version:
+    description: Specify terrascan version
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   
@@ -288,4 +293,30 @@ runs:
           sudo chmod +x "${SNYK_PACKAGE_NAME}"
           sudo mv "${SNYK_PACKAGE_NAME}" /usr/local/bin/snyk
           snyk version
+        fi
+
+    - name: install terrascan version ${{ inputs.terrascan-version }}
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        #!/bin/bash
+        if [[ "${{ inputs.terrascan-version }}" != "installed" && "${{ inputs.terrascan-version }}" != "" ]]; then
+          # download terrascan and verification packages
+          curl -SLO "https://github.com/tenable/terrascan/releases/download/v${{ inputs.terrascan-version }}/checksums.txt"
+          curl -SLO "https://github.com/tenable/terrascan/releases/download/v${{ inputs.terrascan-version }}/terrascan_${{ inputs.terrascan-version }}_Linux_x86_64.tar.gz"
+
+          # verify terrascan package sha
+          if result=$(shasum --ignore-missing --algorithm 256 --check  checksums.txt 2>&1); then
+              echo "Verified terrascan package sha"
+          else
+              echo "Unable to verify terrascan package sha"
+              echo "shasum Output:"
+              echo "$result"
+              exit 1
+          fi
+
+          # install and smoke test terrascan
+          sudo tar -xf "terrascan_${{ inputs.terrascan-version }}_Linux_x86_64.tar.gz" terrascan
+          sudo mv terrascan /usr/local/bin/terrascan
+          terrascan version
         fi

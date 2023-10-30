@@ -1,0 +1,51 @@
+# yamllint disable rule:line-length
+---
+name: terrascan
+
+description: Perform terrascan policy evaluation. Server mode not supported.
+
+inputs:
+
+  working-directory:
+    description: specific folder in which to run the commands
+    required: false
+    default: "."
+
+  terrascan-init-args:
+    description: Provide custom init command flags.
+    required: false
+    default: ""
+
+  terrascan-iac-type:
+    description: terrascan iac provider types.
+    required: false
+    default: ""
+
+  terrascan-policy-type:
+    description: terrascan preset policy types. Default is all.
+    required: false
+    default: "all"
+
+  terrascan-custom-scan-args:
+    description: |
+      Override default settings with any valid terrascan scan flags.
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: terrascan init
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: terrascan init ${{ inputs.terrascan-init-args }}
+    - name: terrascan
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        if [[ "${{ inputs.terrascan-custom-scan-args }}" != "" ]]; then
+          terrascan scan ${{ inputs.terrascan-custom-scan-args }}
+        else
+          terrascan scan -i ${{ inputs.terrascan-iac-type }} -t ${{ inputs.terrascan-policy-type }}
+        fi

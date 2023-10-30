@@ -120,6 +120,39 @@ on:
         type: string
         default: ""
 
+      terrascan-version:
+        description: |
+          Perform terrascan scan of terraform files without plan output. Specify
+          version "installed" to use the version already installed on the executor.
+        required: false
+        type: string
+        default: ""
+
+      terrascan-init-args:
+        description: Provide custom init command flags.
+        required: false
+        type: string
+        default: ""
+
+      terrascan-iac-type:
+        description: terrascan iac provider types.
+        required: false
+        type: string
+        default: ""
+
+      terrascan-policy-type:
+        description: terrascan preset policy types. Default is all.
+        required: false
+        type: string
+        default: "all"
+
+      terrascan-custom-scan-args:
+        description: |
+          Override default settings with any valid terrascan scan flags.
+        required: false
+        type: string
+        default: ""
+
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
@@ -191,7 +224,6 @@ jobs:
           working-directory: ${{ inputs.working-directory }}
           tfsec-additional-args: ${{ inputs.tfsec-additional-args }}
 
-      # python error and fails
       - if: ${{ inputs.checkov-version }} != ""
         name: perform checkov scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/checkov@main
@@ -208,7 +240,15 @@ jobs:
           snyk-token: ${{ inputs.snyk-token }}
           snyk-additional-args: ${{ inputs.snyk-additional-args }}
 
-# terrascan
+      - if: ${{ inputs.terrascan-version }} != ""
+        name: perform terrascan scan of terraform source files
+        uses:  ThoughtWorks-DPS/terraform-action/terrascan@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          terrascan-init-args: ${{ inputs.terrascan-init-args }}
+          terrascan-iac-type: ${{ inputs.terrascan-iac-type }}
+          terrascan-policy-type: ${{ inputs.terrascan-policy-type }}
+
 # driftctl
 # infracost
 
