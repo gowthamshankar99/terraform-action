@@ -213,6 +213,7 @@ jobs:
         uses:  ThoughtWorks-DPS/terraform-action/tflint@main
         with:
           working-directory: ${{ inputs.working-directory }}
+          tflint-version: ${{ inputs.tflint-version }}
           tflint-provider: ${{ inputs.tflint-provider }}
           tflint-provider-version: ${{ inputs.tflint-provider-version }}
           tflint-additional-args: ${{ inputs.tflint-additional-args }}

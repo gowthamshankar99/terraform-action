@@ -17,13 +17,20 @@ inputs:
     required: false
     default: "."
 
+  tflint-version:
+    description: |
+      Perform tflint scan of terraform files. Specify version "installed" to use the version
+      already installed on the executor.
+    required: false
+    default: ""
+
   tflint-provider:
-    description: f
+    description: Cloud provider. aws, google, or azurerm.
     required: false
     default: ""
 
   tflint-provider-version:
-    description: f
+    description: Provider plugin version.
     required: false
     default: ""
 
@@ -42,7 +49,8 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
+        #!/usr/bin/env bash
+
         install_provider_plugin() {
           cat <<- EOD > .tflint.hcl
           plugin "${{ inputs.tflint-provider }}" {
@@ -52,9 +60,11 @@ runs:
           }
         EOD
         }
-
-        install_provider_plugin
-        tflint --version
-        cat .tflint.hcl
-        tflint --init
-        tflint ${{ inputs.tflint-additional-args }}
+        if [[ "${{ inputs.terraform-version }}" != "installed" && "${{ inputs.terrterraformascan-version }}" != "" ]]; then
+          install_provider_plugin
+          tflint --version
+          cat .tflint.hcl
+          tflint --init
+          tflint ${{ inputs.tflint-additional-args }}
+        fi
+        
