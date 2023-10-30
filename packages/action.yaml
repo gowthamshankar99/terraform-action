@@ -61,6 +61,7 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.terraform-version }}" != "installed" && "${{ inputs.terraform-version }}" != "" ]]; then
+          echo "Install terraform v${{ inputs.terraform-version }}"
 
           # download and import HashiCorp public key
           curl --remote-name https://keybase.io/hashicorp/pgp_keys.asc
@@ -108,6 +109,8 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.tflint-version }}" != "installed" && "${{ inputs.tflint-version }}" != "" ]]; then
+          echo "Install tflint v${{ inputs.tflint-version }}"
+
           # download tflint and verification packages
           curl -SLO "https://github.com/terraform-linters/tflint/releases/download/v${{ inputs.tflint-version }}/tflint_linux_amd64.zip"
           curl -SLO "https://github.com/terraform-linters/tflint/releases/download/v${{ inputs.tflint-version }}/checksums.txt"
@@ -201,7 +204,8 @@ runs:
         EOD
         }
         if [[ "${{ inputs.tfsec-version }}" != "installed" && "${{ inputs.tfsec-version }}" != "" ]]; then
-          
+          echo "Install tfsec v${{ inputs.tfsec-version }}"
+
           # load tfsec and verification packages
           curl -SLO "https://github.com/aquasecurity/tfsec/releases/download/v${{ inputs.tfsec-version }}/tfsec-linux-amd64"
           curl -SLO "https://github.com/aquasecurity/tfsec/releases/download/v${{ inputs.tfsec-version }}/tfsec-linux-amd64.D66B222A3EA4C25D5D1A097FC34ACEFB46EC39CE.sig"
@@ -251,6 +255,8 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.checkov-version }}" != "installed" && "${{ inputs.checkov-version }}" != "" ]]; then
+          echo "Install checkov v${{ inputs.checkov-version }}"
+
           sudo pip install --no-cache-dir checkov==${{ inputs.checkov-version }}
           checkov --version
         fi
@@ -261,6 +267,8 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.snyk-version }}" != "installed" && "${{ inputs.snyk-version }}" != "" ]]; then
+          echo "Install snyk v${{ inputs.snyk-version }}"
+
           # download snyk and verification packages
           SNYK_SIGNING_KEY=A22665FB96CAB0E0973604C83676C4B8289C296E
           SNYK_PACKAGE_NAME=$(grep -q 'ID=alpine' /etc/os-release && echo "snyk-alpine" || echo "snyk-linux")
@@ -301,6 +309,8 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.terrascan-version }}" != "installed" && "${{ inputs.terrascan-version }}" != "" ]]; then
+          echo "Install terrascan v${{ inputs.terrascan-version }}"
+
           # download terrascan and verification packages
           curl -SLO "https://github.com/tenable/terrascan/releases/download/v${{ inputs.terrascan-version }}/checksums.txt"
           curl -SLO "https://github.com/tenable/terrascan/releases/download/v${{ inputs.terrascan-version }}/terrascan_${{ inputs.terrascan-version }}_Linux_x86_64.tar.gz"
