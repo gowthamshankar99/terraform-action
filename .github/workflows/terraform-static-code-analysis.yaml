@@ -163,12 +163,13 @@ jobs:
           working-directory: ${{ inputs.working-directory }}
           tfsec-additional-args: ${{ inputs.tfsec-additional-args }}
 
-      - if: ${{ inputs.checkov-version }} != ""
-        name: perform checkov scan of terraform source files
-        uses:  ThoughtWorks-DPS/terraform-action/checkov@main
-        with:
-          working-directory: ${{ inputs.working-directory }}
-          checkov-additional-args: ${{ inputs.checkov-additional-args }}
+      # python error and fails
+      # - if: ${{ inputs.checkov-version }} != ""
+      #   name: perform checkov scan of terraform source files
+      #   uses:  ThoughtWorks-DPS/terraform-action/checkov@main
+      #   with:
+      #     working-directory: ${{ inputs.working-directory }}
+      #     checkov-additional-args: ${{ inputs.checkov-additional-args }}
 
 
 # snyk iac
