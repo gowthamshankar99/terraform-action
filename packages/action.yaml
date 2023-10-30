@@ -13,32 +13,32 @@ inputs:
   cosign-version:
     description: Specify cosign version
     required: false
-    default: installed
+    default: ""
 
   terraform-version:
     description: Specify terraform version
     required: false
-    default: installed
+    default: ""
 
   tflint-version:
     description: Specify tflint version
     required: false
-    default: installed
+    default: ""
 
   tfsec-version:
     description: Specify tfsec version
     required: false
-    default: installed
+    default: ""
 
   checkov-version:
     description: Specify checkov version
     required: false
-    default: installed
+    default: ""
 
   snyk-version:
     description: Specify snyk version
     required: false
-    default: installed
+    default: ""
 
 runs:
   using: "composite"
@@ -55,7 +55,7 @@ runs:
       shell: bash
       run: |
         #!/bin/bash
-        if [[ "${{ inputs.terraform-version }}" != "installed" ]]; then
+        if [[ "${{ inputs.terraform-version }}" != "installed" && "${{ inputs.terraform-version }}" != "" ]]; then
 
           # download and import HashiCorp public key
           curl --remote-name https://keybase.io/hashicorp/pgp_keys.asc
@@ -102,7 +102,7 @@ runs:
       shell: bash
       run: |
         #!/bin/bash
-        if [[ "${{ inputs.tflint-version }}" != "installed" ]]; then
+        if [[ "${{ inputs.tflint-version }}" != "installed" && "${{ inputs.tflint-version }}" != "" ]]; then
           # download tflint and verification packages
           curl -SLO "https://github.com/terraform-linters/tflint/releases/download/v${{ inputs.tflint-version }}/tflint_linux_amd64.zip"
           curl -SLO "https://github.com/terraform-linters/tflint/releases/download/v${{ inputs.tflint-version }}/checksums.txt"
@@ -195,7 +195,7 @@ runs:
           -----END PGP PUBLIC KEY BLOCK-----
         EOD
         }
-        if [[ "${{ inputs.tfsec-version }}" != "installed" ]]; then
+        if [[ "${{ inputs.tfsec-version }}" != "installed" && "${{ inputs.tfsec-version }}" != "" ]]; then
           
           # load tfsec and verification packages
           curl -SLO "https://github.com/aquasecurity/tfsec/releases/download/v${{ inputs.tfsec-version }}/tfsec-linux-amd64"
@@ -245,7 +245,7 @@ runs:
       shell: bash
       run: |
         #!/bin/bash
-        if [[ "${{ inputs.checkov-version }}" != "installed" ]]; then
+        if [[ "${{ inputs.checkov-version }}" != "installed" && "${{ inputs.checkov-version }}" != "" ]]; then
           sudo pip install --no-cache-dir checkov==${{ inputs.checkov-version }}
           checkov --version
         fi
@@ -255,7 +255,7 @@ runs:
       shell: bash
       run: |
         #!/bin/bash
-        if [[ "${{ inputs.snyk-version }}" != "installed" ]]; then
+        if [[ "${{ inputs.snyk-version }}" != "installed" && "${{ inputs.snyk-version }}" != "" ]]; then
           # download snyk and verification packages
           SNYK_SIGNING_KEY=A22665FB96CAB0E0973604C83676C4B8289C296E
           SNYK_PACKAGE_NAME=$(grep -q 'ID=alpine' /etc/os-release && echo "snyk-alpine" || echo "snyk-linux")

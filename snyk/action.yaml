@@ -1,0 +1,51 @@
+# yamllint disable rule:line-length
+---
+name: snyk IaC
+
+description: |
+  Run snyk scan in working-directory.
+
+inputs:
+
+  working-directory:
+    description: specific folder in which to run the commands
+    required: false
+    default: "."
+
+  terraform-plan-outfile:
+    description: specify terraform plan output file for targeted scan
+    required: false
+    default: ""
+
+  snyk-organization:
+    description: Snyk organisation name.
+    required: false
+    default: ""
+
+  snyk-token:
+    description: Snyk API token.
+    required: false
+    default: ""
+
+  snyk-additional-args:
+    description: |
+      Include any additional snyk commandline arguments.
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: snyk scan of terraform files
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        #!/bin/bash
+        export SNYK_TOKEN=${{ inputs.snyk-token }}
+        snyk --version
+        if [[ "${{ inputs.terraform-plan-outfile }}" != "" ]]; then
+          snyk iac test --org=${{ inputs.snyk-organization }} ${{ inputs.checkov-additional-args }} ${{ inputs.terraform-plan-outfile }}
+        else
+          snyk iac test --org=${{ inputs.snyk-organization }} ${{ inputs.checkov-additional-args }}
+        fi

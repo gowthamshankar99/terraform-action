@@ -38,5 +38,3 @@ runs:
         else
           checkov ${{ inputs.checkov-additional-args }}
         fi
-        checkov --version
-        checkov ${{ inputs.checkov-additional-args }}

@@ -25,7 +25,7 @@ on:
           to use the version already installed on the executor.
         required: false
         type: string
-        default: "installed"
+        default: ""
 
       terraform-init-additional-args:
         description: |
@@ -41,7 +41,7 @@ on:
           already installed on the executor.
         required: false
         type: string
-        default: "installed"
+        default: ""
 
       tflint-provider:
         description: Cloud provider. aws, google, or azurerm
@@ -69,7 +69,7 @@ on:
           already installed on the executor.
         required: false
         type: string
-        default: "installed"
+        default: ""
 
       tfsec-additional-args:
         description: |
@@ -84,7 +84,7 @@ on:
           version "installed" to use the version already installed on the executor.
         required: false
         type: string
-        default: "installed"
+        default: ""
 
       checkov-additional-args:
         description: |
@@ -99,7 +99,26 @@ on:
           version "installed" to use the version already installed on the executor.
         required: false
         type: string
-        default: "installed"
+        default: ""
+
+      snyk-organization:
+        description: Snyk organisation name.
+        required: false
+        type: string
+        default: ""
+
+      snyk-token:
+        description: Snyk API token.
+        required: false
+        type: string
+        default: $SNYK_TOKEN
+
+      snyk-additional-args:
+        description: |
+          Include any additional snyk commandline arguments.
+        required: false
+        type: string
+        default: ""
 
       before-static-analysis:
         description: Optional steps to run before running static analysis
@@ -180,6 +199,14 @@ jobs:
       #     working-directory: ${{ inputs.working-directory }}
       #     checkov-additional-args: ${{ inputs.checkov-additional-args }}
 
+      - if: ${{ inputs.snyk-version }} != ""
+        name: perform snyk scan of terraform source files
+        uses:  ThoughtWorks-DPS/terraform-action/snyk@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          snyk-version: ${{ inputs.snyk-version }}
+          snyk-organization: ${{ inputs.snyk-organization }}
+          snyk-token: ${{ inputs.snyk-token }}
 
 # snyk iac
 # terrascan
