@@ -21,7 +21,7 @@ inputs:
     description: |
       Include any additional tfsec commandline arguments.
     required: false
-    default: ""
+    default: "-d ."
 
 runs:
   using: "composite"

@@ -91,7 +91,7 @@ on:
           Include any additional checkov commandline arguments.
         required: false
         type: string
-        default: ""
+        default: "-d ."
 
       snyk-version:
         description: |
@@ -192,12 +192,12 @@ jobs:
           tfsec-additional-args: ${{ inputs.tfsec-additional-args }}
 
       # python error and fails
-      # - if: ${{ inputs.checkov-version }} != ""
-      #   name: perform checkov scan of terraform source files
-      #   uses:  ThoughtWorks-DPS/terraform-action/checkov@main
-      #   with:
-      #     working-directory: ${{ inputs.working-directory }}
-      #     checkov-additional-args: ${{ inputs.checkov-additional-args }}
+      - if: ${{ inputs.checkov-version }} != ""
+        name: perform checkov scan of terraform source files
+        uses:  ThoughtWorks-DPS/terraform-action/checkov@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          checkov-additional-args: ${{ inputs.checkov-additional-args }}
 
       - if: ${{ inputs.snyk-version }} != ""
         name: perform snyk scan of terraform source files
