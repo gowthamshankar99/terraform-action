@@ -185,6 +185,7 @@ jobs:
           tfsec-version: ${{ inputs.tfsec-version }}
           checkov-version: ${{ inputs.checkov-version }}
           snyk-version: ${{ inputs.snyk-version }}
+          terrascan-version: ${{ inputs.terrascan-version }}
 
       - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
