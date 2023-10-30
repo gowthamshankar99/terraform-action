@@ -25,7 +25,7 @@ on:
           to use the version already installed on the executor.
         required: false
         type: string
-        default: ""
+        default: "installed"
 
       terraform-init-additional-args:
         description: |
@@ -41,7 +41,7 @@ on:
           already installed on the executor.
         required: false
         type: string
-        default: ""
+        default: "installed"
 
       tflint-provider:
         description: Cloud provider. aws, google, or azurerm
@@ -69,7 +69,7 @@ on:
           already installed on the executor.
         required: false
         type: string
-        default: ""
+        default: "installed"
 
       tfsec-additional-args:
         description: |
@@ -84,7 +84,7 @@ on:
           version "installed" to use the version already installed on the executor.
         required: false
         type: string
-        default: ""
+        default: "installed"
 
       checkov-additional-args:
         description: |
@@ -99,7 +99,7 @@ on:
           version "installed" to use the version already installed on the executor.
         required: false
         type: string
-        default: ""
+        default: "installed"
 
       before-static-analysis:
         description: Optional steps to run before running static analysis
