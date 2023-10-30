@@ -49,7 +49,7 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.terrascan-version }}" != "" ]]; then
-          terrascan --version
+          terrascan version
           terrascan init ${{ inputs.terrascan-init-args }}
           if [[ "${{ inputs.terrascan-custom-scan-args }}" != "" ]]; then
             terrascan scan ${{ inputs.terrascan-custom-scan-args }}
