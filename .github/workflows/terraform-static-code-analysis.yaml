@@ -204,11 +204,10 @@ jobs:
         uses:  ThoughtWorks-DPS/terraform-action/snyk@main
         with:
           working-directory: ${{ inputs.working-directory }}
-          snyk-version: ${{ inputs.snyk-version }}
           snyk-organization: ${{ inputs.snyk-organization }}
           snyk-token: ${{ inputs.snyk-token }}
+          snyk-additional-args: ${{ inputs.snyk-additional-args }}
 
-# snyk iac
 # terrascan
 # driftctl
 # infracost
