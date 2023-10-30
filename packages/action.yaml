@@ -59,7 +59,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
+        #!/usr/bin/env bash
         if [[ "${{ inputs.terraform-version }}" != "installed" && "${{ inputs.terraform-version }}" != "" ]]; then
 
           # download and import HashiCorp public key
@@ -106,7 +106,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
+        #!/usr/bin/env bash
         if [[ "${{ inputs.tflint-version }}" != "installed" && "${{ inputs.tflint-version }}" != "" ]]; then
           # download tflint and verification packages
           curl -SLO "https://github.com/terraform-linters/tflint/releases/download/v${{ inputs.tflint-version }}/tflint_linux_amd64.zip"
@@ -143,7 +143,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
+        #!/usr/bin/env bash
         install_public_key() {
           cat <<- EOD > tfsec.key
           -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -249,7 +249,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
+        #!/usr/bin/env bash
         if [[ "${{ inputs.checkov-version }}" != "installed" && "${{ inputs.checkov-version }}" != "" ]]; then
           sudo pip install --no-cache-dir checkov==${{ inputs.checkov-version }}
           checkov --version
@@ -259,7 +259,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
+        #!/usr/bin/env bash
         if [[ "${{ inputs.snyk-version }}" != "installed" && "${{ inputs.snyk-version }}" != "" ]]; then
           # download snyk and verification packages
           SNYK_SIGNING_KEY=A22665FB96CAB0E0973604C83676C4B8289C296E
@@ -299,7 +299,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
+        #!/usr/bin/env bash
         if [[ "${{ inputs.terrascan-version }}" != "installed" && "${{ inputs.terrascan-version }}" != "" ]]; then
           # download terrascan and verification packages
           curl -SLO "https://github.com/tenable/terrascan/releases/download/v${{ inputs.terrascan-version }}/checksums.txt"

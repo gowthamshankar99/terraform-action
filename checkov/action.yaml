@@ -12,6 +12,13 @@ inputs:
     required: false
     default: "."
 
+  checkov-version:
+    description: |
+      Perform checkov scan of terraform files without plan output. Specify
+      version "installed" to use the version already installed on the executor.
+    required: false
+    default: ""
+
   terraform-plan-outfile:
     description: specify terraform plan output file for targeted scan
     required: false
@@ -31,10 +38,12 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
-        checkov --version
-        if [[ "${{ inputs.terraform-plan-outfile }}" != "" ]]; then
-          checkov -f ${{ inputs.terraform-plan-outfile }} ${{ inputs.checkov-additional-args }}
-        else
-          checkov ${{ inputs.checkov-additional-args }}
+        #!/usr/bin/env bash
+        if [[ "${{ inputs.checkov-version }}" != "" ]]; then
+          checkov --version
+          if [[ "${{ inputs.terraform-plan-outfile }}" != "" ]]; then
+            checkov -f ${{ inputs.terraform-plan-outfile }} ${{ inputs.checkov-additional-args }}
+          else
+            checkov ${{ inputs.checkov-additional-args }}
+          fi
         fi

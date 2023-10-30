@@ -208,8 +208,7 @@ jobs:
         shell: bash
         run: terraform validate
 
-      - if: ${{ inputs.tflint-version }} != ""
-        name: perform tflint scan of terraform source files
+      - name: optional tflint scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/tflint@main
         with:
           working-directory: ${{ inputs.working-directory }}
@@ -218,34 +217,34 @@ jobs:
           tflint-provider-version: ${{ inputs.tflint-provider-version }}
           tflint-additional-args: ${{ inputs.tflint-additional-args }}
 
-      - if: ${{ inputs.tfsec-version }} != ""
-        name: perform tfsec scan of terraform source files
+      - name: optional tfsec scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/tfsec@main
         with:
           working-directory: ${{ inputs.working-directory }}
+          tfsec-version: ${{ inputs.tfsec-version }}
           tfsec-additional-args: ${{ inputs.tfsec-additional-args }}
 
-      - if: ${{ inputs.checkov-version }} != ""
-        name: perform checkov scan of terraform source files
+      - name: optional checkov scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/checkov@main
         with:
           working-directory: ${{ inputs.working-directory }}
+          checkov-version: ${{ inputs.checkov-version }}
           checkov-additional-args: ${{ inputs.checkov-additional-args }}
 
-      - if: ${{ inputs.snyk-version }} != ""
-        name: perform snyk scan of terraform source files
+      - name: optional snyk scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/snyk@main
         with:
           working-directory: ${{ inputs.working-directory }}
+          snyk-version: ${{ inputs.snyk-version }}
           snyk-organization: ${{ inputs.snyk-organization }}
           snyk-token: ${{ inputs.snyk-token }}
           snyk-additional-args: ${{ inputs.snyk-additional-args }}
 
-      - if: ${{ inputs.terrascan-version }} != ""
-        name: perform terrascan scan of terraform source files
+      - name: optional terrascan scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/terrascan@main
         with:
           working-directory: ${{ inputs.working-directory }}
+          terrascan-version: ${{ inputs.terrascan-version }}
           terrascan-init-args: ${{ inputs.terrascan-init-args }}
           terrascan-iac-type: ${{ inputs.terrascan-iac-type }}
           terrascan-policy-type: ${{ inputs.terrascan-policy-type }}

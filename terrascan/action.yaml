@@ -11,6 +11,13 @@ inputs:
     required: false
     default: "."
 
+  terrascan-version:
+    description: |
+      Perform terrascan scan of terraform files without plan output. Specify
+      version "installed" to use the version already installed on the executor.
+    required: false
+    default: ""
+
   terrascan-init-args:
     description: Provide custom init command flags.
     required: false
@@ -36,16 +43,17 @@ runs:
   using: "composite"
 
   steps:
-    - name: terrascan init
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: terrascan init ${{ inputs.terrascan-init-args }}
     - name: terrascan
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        if [[ "${{ inputs.terrascan-custom-scan-args }}" != "" ]]; then
-          terrascan scan ${{ inputs.terrascan-custom-scan-args }}
-        else
-          terrascan scan -i ${{ inputs.terrascan-iac-type }} -t ${{ inputs.terrascan-policy-type }}
+        #!/usr/bin/env bash
+        if [[ "${{ inputs.terrascan-version }}" != "" ]]; then
+          terrascan --version
+          terrascan init ${{ inputs.terrascan-init-args }}
+          if [[ "${{ inputs.terrascan-custom-scan-args }}" != "" ]]; then
+            terrascan scan ${{ inputs.terrascan-custom-scan-args }}
+          else
+            terrascan scan -i ${{ inputs.terrascan-iac-type }} -t ${{ inputs.terrascan-policy-type }}
+          fi
         fi

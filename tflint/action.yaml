@@ -60,7 +60,7 @@ runs:
           }
         EOD
         }
-        if [[ "${{ inputs.terraform-version }}" != "installed" && "${{ inputs.terrterraformascan-version }}" != "" ]]; then
+        if [[ "${{ inputs.tflint-version }}" != "" ]]; then
           install_provider_plugin
           tflint --version
           cat .tflint.hcl

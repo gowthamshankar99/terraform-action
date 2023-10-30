@@ -12,6 +12,13 @@ inputs:
     required: false
     default: "."
 
+  tfsec-version:
+    description: |
+      Perform tfsec scan of terraform files. Specify version "installed" to use the version
+      already installed on the executor.
+    required: false
+    default: ""
+
   tfsec-additional-args:
     description: |
       Include any additional tfsec commandline arguments.
@@ -26,6 +33,8 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        #!/bin/bash
-        tfsec --version
-        tfsec ${{ inputs.tfsec-additional-args }}
+        #!/usr/bin/env bash
+        if [[ "${{ inputs.tfsec-version }}" != "" ]]; then
+          tfsec --version
+          tfsec ${{ inputs.tfsec-additional-args }}
+        fi
