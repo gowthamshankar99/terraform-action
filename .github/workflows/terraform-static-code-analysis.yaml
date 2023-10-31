@@ -154,6 +154,12 @@ on:
         type: string
         default: ""
 
+      driftctl-version:
+        description: Specify driftctl version or "installed" to perform scan. Leave blank to skip.
+        required: false
+        type: string
+        default: ""
+
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
@@ -187,6 +193,7 @@ jobs:
           checkov-version: ${{ inputs.checkov-version }}
           snyk-version: ${{ inputs.snyk-version }}
           terrascan-version: ${{ inputs.terrascan-version }}
+          driftctl-version: ${{ inputs.driftctl-version }}
 
       - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
