@@ -181,6 +181,12 @@ on:
         type: string
         default: ""
 
+      trivy-version:
+        description: Specify trivy version or "installed" to perform scan. Leave blank to skip.
+        required: false
+        type: string
+        default: ""
+
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
