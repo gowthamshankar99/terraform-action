@@ -390,8 +390,8 @@ runs:
         if [[ "${{ inputs.infracost-version }}" != "installed" && "${{ inputs.infracost-version }}" != "" ]]; then
           echo "Install infracost v${{ inputs.infracost-version }}"
           # download infracost and verification packages
-          curl -SLO "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-amd64.tar.gz"
-          curl -SLO "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-amd64.tar.gz.sha256"
+          curl -SLO "https://github.com/infracost/infracost/releases/download/v${{ inputs.infracost-version }}/infracost-linux-amd64.tar.gz"
+          curl -SLO "https://github.com/infracost/infracost/releases/download/v${{ inputs.infracost-version }}/infracost-linux-amd64.tar.gz.sha256"
 
           # verify package sha
           if result=$(shasum --ignore-missing --algorithm 256 --check infracost-linux-amd64.tar.gz.sha256 2>&1); then
