@@ -187,11 +187,11 @@ on:
         type: string
         default: ""
 
-      trivy-additional-args:
+      trivy-commandline-args:
         description: Provide additional trivy commandline arguments.
         required: false
         type: string
-        default: "config ."
+        default: "config . --exit-code 1"
 
       before-static-analysis:
         description: Optional steps to run before running static analysis
@@ -305,7 +305,7 @@ jobs:
         with:
           working-directory: ${{ inputs.working-directory }}
           trivy-version: ${{ inputs.trivy-version }}
-          trivy-additional-args: ${{ inputs.trivy-additional-args }}
+          trivy-additional-args: ${{ inputs.trivy-commandline-args }}
 
       - name: run custom after-analysis scripts
         working-directory: ${{ inputs.working-directory }}

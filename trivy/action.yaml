@@ -2,7 +2,7 @@
 ---
 name: trivy
 
-description: Run trivy scan in working-directory.
+description: Run trivy scan in working-director. Default commandline args = config . --exit-code 1
 
 inputs:
 
@@ -18,10 +18,10 @@ inputs:
     required: false
     default: ""
 
-  trivy-additional-args:
+  trivy-commandline-args:
     description: Provide additional trivy commandline arguments.
     required: false
-    default: "config ."
+    default: "config . --exit-code 1"
 
 runs:
   using: "composite"
@@ -35,5 +35,5 @@ runs:
         if [[ "${{ inputs.trivy-version }}" != "" ]]; then
           echo "Perform trivy scan"
           trivy --version
-          trivy ${{ inputs.trivy-additional-args }}
+          trivy ${{ inputs.trivy-commandline-args }}
         fi
