@@ -34,6 +34,11 @@ inputs:
     required: false
     default: ""
 
+  trivy-version:
+    description: Specify trivy version or "installed" to perform scan. Leave blank to skip.
+    required: false
+    default: ""
+
   checkov-version:
     description: Specify checkov version or "installed" to perform scan. Leave blank to skip.
     required: false
@@ -407,4 +412,31 @@ runs:
           sudo tar -xf infracost-linux-amd64.tar.gz
           sudo mv infracost-linux-amd64 /usr/local/bin/infracost
           infracost --version
+        fi
+
+    - name: install trivy
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        #!/usr/bin/env bash
+        if [[ "${{ inputs.trivy-version }}" != "installed" && "${{ inputs.trivy-version }}" != "" ]]; then
+          # download trivy package and verification packages
+          curl -SLO "https://github.com/aquasecurity/trivy/releases/download/v${{ inputs.trivy-version }}/trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz"
+          curl -SLO "https://github.com/aquasecurity/trivy/releases/download/v${{ inputs.trivy-version }}/trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz.pem"
+          curl -SLO "https://github.com/aquasecurity/trivy/releases/download/v${{ inputs.trivy-version }}/trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz.sig"
+
+          # verify signature
+          if result=$(cosign verify-blob "trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz" --certificate "trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz.pem" --signature "trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz.sig" --certificate-identity-regexp 'https://github\.com/aquasecurity/trivy/\.github/workflows/.+' --certificate-oidc-issuer "https://token.actions.githubusercontent.com" 2>&1); then
+              echo "Verified trivy installation package"
+          else
+              echo "Unable to verify trivy installation package"
+              echo "cosign Output:"
+              echo "$result"
+              exit 1
+          fi
+
+          # install and smoke test trivy
+          sudo tar -xzf "trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz"
+          sudo mv trivy /usr/local/bin/trivy
+          trivy --version
         fi
