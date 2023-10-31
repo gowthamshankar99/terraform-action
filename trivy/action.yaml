@@ -21,7 +21,7 @@ inputs:
   trivy-additional-args:
     description: Provide additional trivy commandline arguments.
     required: false
-    default: "."
+    default: "config ."
 
 runs:
   using: "composite"

@@ -191,7 +191,7 @@ on:
         description: Provide additional trivy commandline arguments.
         required: false
         type: string
-        default: "."
+        default: "config ."
 
       before-static-analysis:
         description: Optional steps to run before running static analysis
