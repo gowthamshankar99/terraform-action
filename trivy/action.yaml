@@ -35,5 +35,5 @@ runs:
         if [[ "${{ inputs.trivy-version }}" != "" ]]; then
           echo "Perform trivy scan"
           trivy --version
-          trivy ${{ inputs.tfsec-additional-args }}
+          trivy ${{ inputs.trivy-additional-args }}
         fi
