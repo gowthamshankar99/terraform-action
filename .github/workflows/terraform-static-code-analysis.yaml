@@ -187,6 +187,12 @@ on:
         type: string
         default: ""
 
+      trivy-additional-args:
+        description: Provide additional trivy commandline arguments.
+        required: false
+        type: string
+        default: "."
+
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
@@ -294,15 +300,16 @@ jobs:
           driftctl-version: ${{ inputs.driftctl-version }}
           driftctl-additional-args: ${{ inputs.driftctl-additional-args }}
 
-
-
+      - name: optional trivy scan
+        uses:  ThoughtWorks-DPS/terraform-action/trivy@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          trivy-version: ${{ inputs.trivy-version }}
+          trivy-additional-args: ${{ inputs.trivy-additional-args }}
 
       - name: run custom after-analysis scripts
         working-directory: ${{ inputs.working-directory }}
         shell: bash
         run: ${{ inputs.after-static-analysis }}
-
-
-
 
       # echo "action_state=yellow" >> "$GITHUB_ENV"
