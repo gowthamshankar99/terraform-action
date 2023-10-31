@@ -2,31 +2,29 @@
 ---
 name: checkov
 
-description: |
-  Run checkov scan in working-directory.
+description: Run checkov scan in working-directory.
 
 inputs:
 
   working-directory:
-    description: specific folder in which to run the commands
+    description: Set working directory. Default is ./.
     required: false
     default: "."
 
   checkov-version:
     description: |
-      Perform checkov scan of terraform files without plan output. Specify
-      version "installed" to use the version already installed on the executor.
+      Specify checkov version to perform scan. Set version "installed" to
+      perform scan with the version already installed on the Runner.
     required: false
     default: ""
 
   terraform-plan-outfile:
-    description: specify terraform plan output file for targeted scan
+    description: Provide name of terraform plan output file for targeted scan.
     required: false
     default: ""
 
   checkov-additional-args:
-    description: |
-      Include any additional tfsec commandline arguments.
+    description: Set specific commandline arguments. Default is "-d .".
     required: false
     default: "-d ."
 
@@ -40,6 +38,7 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.checkov-version }}" != "" ]]; then
+          echo "Perform checkov scan"
           checkov --version
           if [[ "${{ inputs.terraform-plan-outfile }}" != "" ]]; then
             checkov -f ${{ inputs.terraform-plan-outfile }} ${{ inputs.checkov-additional-args }}

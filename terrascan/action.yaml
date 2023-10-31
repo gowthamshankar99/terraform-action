@@ -7,7 +7,7 @@ description: Perform terrascan policy evaluation. Server mode not supported.
 inputs:
 
   working-directory:
-    description: specific folder in which to run the commands
+    description: Set working directory. Default is ./.
     required: false
     default: "."
 
@@ -24,18 +24,17 @@ inputs:
     default: ""
 
   terrascan-iac-type:
-    description: terrascan iac provider types.
+    description: Terrascan iac provider types.
     required: false
     default: ""
 
   terrascan-policy-type:
-    description: terrascan preset policy types. Default is all.
+    description: Terrascan preset policy types. Default is all.
     required: false
     default: "all"
 
   terrascan-custom-scan-args:
-    description: |
-      Override default settings with any valid terrascan scan flags.
+    description: Override default settings with any valid terrascan scan flags.
     required: false
     default: ""
 
@@ -43,12 +42,13 @@ runs:
   using: "composite"
 
   steps:
-    - name: terrascan
+    - name: terrascan policy sacn of terraform files
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.terrascan-version }}" != "" ]]; then
+          echo "Perform terrascan scan"
           terrascan version
           terrascan init ${{ inputs.terrascan-init-args }}
           if [[ "${{ inputs.terrascan-custom-scan-args }}" != "" ]]; then

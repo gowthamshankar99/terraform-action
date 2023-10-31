@@ -1,47 +1,56 @@
+# yamllint disable rule:line-length
 ---
 name: packages
 
-description: Install packages for terraform-action@workflows
+description: |
+  Specify version to install optional terraform-action@workflows packages and
+  perform scan. Use "installed" to perform static analysis with package
+  pre-installed on Runner. 
 
 inputs:
 
   working-directory:
-    description: set working directory; default is .
+    description: Set working directory. Default is ./.
     required: false
     default: .
 
   cosign-version:
-    description: Specify cosign version
+    description: Specify cosign version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
   terraform-version:
-    description: Specify terraform version
+    description: Specify terraform version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
   tflint-version:
-    description: Specify tflint version
+    description: Specify tflint version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
   tfsec-version:
-    description: Specify tfsec version
+    description: Specify tfsec version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
   checkov-version:
-    description: Specify checkov version
+    description: Specify checkov version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
   snyk-version:
-    description: Specify snyk version
+    description: Specify snyk version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
   terrascan-version:
-    description: Specify terrascan version
+    description: Specify terrascan version or "installed" to perform scan. Leave blank to skip.
+    required: false
+    default: ""
+
+  driftctl-version:
+    description: Specify driftctl version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
@@ -49,13 +58,12 @@ runs:
   using: "composite"
   
   steps:
-    - if: ${{ inputs.cosign-version }} != "installed"
-      name: install cosign version ${{ inputs.cosign-version }}
+    - name: install cosign 
       uses: sigstore/cosign-installer@main
       with:
         cosign-release: v${{ inputs.cosign-version }}
 
-    - name: install terraform version ${{ inputs.terraform-version }}
+    - name: install terraform
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
@@ -103,7 +111,7 @@ runs:
           terraform version
         fi
 
-    - name: install tflint version ${{ inputs.tflint-version }}
+    - name: install tflint
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
@@ -142,7 +150,7 @@ runs:
           tflint --version
         fi
 
-    - name: install tfsec version ${{ inputs.tfsec-version }}
+    - name: install tfsec
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
@@ -249,7 +257,7 @@ runs:
           tfsec --version
         fi
 
-    - name: install checkov version ${{ inputs.checkov-version }}
+    - name: install checkov
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
@@ -261,7 +269,7 @@ runs:
           checkov --version
         fi
 
-    - name: install snyk version ${{ inputs.snyk-version }}
+    - name: install snyk
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
@@ -303,7 +311,7 @@ runs:
           snyk version
         fi
 
-    - name: install terrascan version ${{ inputs.terrascan-version }}
+    - name: install terrascan
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
@@ -329,4 +337,43 @@ runs:
           sudo tar -xf "terrascan_${{ inputs.terrascan-version }}_Linux_x86_64.tar.gz" terrascan
           sudo mv terrascan /usr/local/bin/terrascan
           terrascan version
+        fi
+
+    - name: install driftctl
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        #!/usr/bin/env bash
+        if [[ "${{ inputs.driftctl-version }}" != "installed" && "${{ inputs.driftctl-version }}" != "" ]]; then
+          echo "Install driftctl v${{ inputs.driftctl-version }}"
+          # download driftctl and verification packages
+          curl -SLO "https://github.com/snyk/driftctl/releases/download/v${{ inputs.driftctl-version }}/driftctl_linux_amd64"
+          curl -SLO "https://github.com/snyk/driftctl/releases/download/v${{ inputs.driftctl-version }}/driftctl_SHA256SUMS"
+          curl -SLO "https://github.com/snyk/driftctl/releases/download/v${{ inputs.driftctl-version }}/driftctl_SHA256SUMS.gpg"
+          gpg --keyserver hkps://keys.openpgp.org --recv-keys 65DDA08AA1605FC8211FC928FFB5FCAFD223D274
+
+          # verify package signature
+          if result=$(gpg --verify driftctl_SHA256SUMS.gpg driftctl_SHA256SUMS 2>&1); then
+              echo "Verified driftctl signature"
+          else
+              echo "Unable to verify driftctl signature"
+              echo "shasum Output:"
+              echo "$result"
+              exit 1
+          fi
+
+          # verify package sha
+          if result=$(shasum --ignore-missing --algorithm 256 --check driftctl_SHA256SUMS 2>&1); then
+              echo "Verified driftctl package sha"
+          else
+              echo "Unable to verify driftctl package sha"
+              echo "shasum Output:"
+              echo "$result"
+              exit 1
+          fi
+
+          sudo chmod +x driftctl_linux_amd64
+          sudo mv driftctl_linux_amd64 /usr/local/bin/driftctl
+          driftctl version
+
         fi

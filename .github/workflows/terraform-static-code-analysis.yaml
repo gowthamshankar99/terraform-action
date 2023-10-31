@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 ---
 run-name: Terraform static code analysis
 
@@ -7,13 +8,13 @@ on:
     inputs:
 
       working-directory:
-        description: set working directory; default is .
+        description: Set working directory. Default is ./.
         required: false
         type: string
         default: .
 
       cosign-version:
-        description: Specify cosign version
+        description: Specify cosign version.
         required: false
         type: string
         default: installed
@@ -37,8 +38,8 @@ on:
 
       tflint-version:
         description: |
-          Perform tflint scan of terraform files. Specify version "installed" to use the version
-          already installed on the executor.
+          Specify tflint version to perform scan. Set version "installed" to
+          perform scan with the version already installed on the Runner.
         required: false
         type: string
         default: ""
@@ -65,8 +66,8 @@ on:
 
       tfsec-version:
         description: |
-          Perform tfsec scan of terraform files. Specify version "installed" to use the version
-          already installed on the executor.
+          Specify tfsec version to perform scan. Set version "installed" to
+          perform scan with the version already installed on the Runner.
         required: false
         type: string
         default: ""
