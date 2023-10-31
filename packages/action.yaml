@@ -34,11 +34,6 @@ inputs:
     required: false
     default: ""
 
-  trivy-version:
-    description: Specify trivy version or "installed" to perform scan. Leave blank to skip.
-    required: false
-    default: ""
-
   checkov-version:
     description: Specify checkov version or "installed" to perform scan. Leave blank to skip.
     required: false
@@ -61,6 +56,11 @@ inputs:
 
   infracost-version:
     description: Specify infracost version or "installed" to perform scan. Leave blank to skip.
+    required: false
+    default: ""
+
+  trivy-version:
+    description: Specify trivy version or "installed" to perform scan. Leave blank to skip.
     required: false
     default: ""
 
@@ -420,6 +420,7 @@ runs:
       run: |
         #!/usr/bin/env bash
         if [[ "${{ inputs.trivy-version }}" != "installed" && "${{ inputs.trivy-version }}" != "" ]]; then
+          echo "Install trivy v${{ inputs.trivy-version }}"
           # download trivy package and verification packages
           curl -SLO "https://github.com/aquasecurity/trivy/releases/download/v${{ inputs.trivy-version }}/trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz"
           curl -SLO "https://github.com/aquasecurity/trivy/releases/download/v${{ inputs.trivy-version }}/trivy_${{ inputs.trivy-version }}_Linux-64bit.tar.gz.pem"

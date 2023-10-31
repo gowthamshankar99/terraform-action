@@ -222,6 +222,7 @@ jobs:
           terrascan-version: ${{ inputs.terrascan-version }}
           driftctl-version: ${{ inputs.driftctl-version }}
           infracost-version: ${{ inputs.infracost-version }}
+          trivy-version: ${{ inputs.trivy-version }}
 
       - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
@@ -294,7 +295,7 @@ jobs:
           driftctl-additional-args: ${{ inputs.driftctl-additional-args }}
 
 
-# infracost
+
 
       - name: run custom after-analysis scripts
         working-directory: ${{ inputs.working-directory }}
