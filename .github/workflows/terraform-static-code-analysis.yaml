@@ -115,8 +115,7 @@ on:
         default: $SNYK_TOKEN
 
       snyk-additional-args:
-        description: |
-          Include any additional snyk commandline arguments.
+        description: Provide additional commandline arguments.
         required: false
         type: string
         default: ""
@@ -160,6 +159,28 @@ on:
         type: string
         default: ""
 
+      drift-additional-args:
+        description: Provide additional commandline arguments.
+        required: false
+        type: string
+        default: ""
+
+      infracost-version:
+        description: Specify infracost version or "installed" to perform scan. Leave blank to skip.
+        required: false
+        type: string
+        default: ""
+
+      infracost-api-key:
+        description: organization api key
+        type: string
+        default: $INFRACOST_API_KEY
+
+      infracost-additional-args:
+        description: Provide flag options to scan command.
+        type: string
+        default: ""
+
       before-static-analysis:
         description: Optional steps to run before running static analysis
         required: false
@@ -194,6 +215,7 @@ jobs:
           snyk-version: ${{ inputs.snyk-version }}
           terrascan-version: ${{ inputs.terrascan-version }}
           driftctl-version: ${{ inputs.driftctl-version }}
+          infracost-version: ${{ inputs.infracost-version }}
 
       - name: run custom before-analysis scripts
         working-directory: ${{ inputs.working-directory }}
@@ -258,7 +280,14 @@ jobs:
           terrascan-iac-type: ${{ inputs.terrascan-iac-type }}
           terrascan-policy-type: ${{ inputs.terrascan-policy-type }}
 
-# driftctl
+      - name: optional driftctl assessment
+        uses:  ThoughtWorks-DPS/terraform-action/driftctl@main
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          driftctl-version: ${{ inputs.driftctl-version }}
+          driftctl-additional-args: ${{ inputs.driftctl-additional-args }}
+
+
 # infracost
 
       - name: run custom after-analysis scripts
