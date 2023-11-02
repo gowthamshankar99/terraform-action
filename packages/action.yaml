@@ -16,7 +16,7 @@ inputs:
 
   cosign-version:
     description: Specify cosign version or "installed" to perform scan. Leave blank to skip.
-    required: true
+    required: false
     default: "v2.2.0"
 
   terraform-version:
