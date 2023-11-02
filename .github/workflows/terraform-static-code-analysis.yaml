@@ -15,7 +15,7 @@ on:
 
       cosign-version:
         description: Specify cosign version.
-        required: true
+        required: false
         type: string
         default: "v2.2.0"
 
