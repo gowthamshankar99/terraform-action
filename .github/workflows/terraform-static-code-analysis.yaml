@@ -15,9 +15,9 @@ on:
 
       cosign-version:
         description: Specify cosign version.
-        required: false
+        required: true
         type: string
-        default: ""
+        default: "v2.2.0"
 
       terraform-version:
         description: |
