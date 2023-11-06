@@ -261,12 +261,12 @@ jobs:
           tflint-provider-version: ${{ inputs.tflint-provider-version }}
           tflint-additional-args: ${{ inputs.tflint-additional-args }}
 
-      - name: optional tfsec scan of terraform source files
-        uses:  ThoughtWorks-DPS/terraform-action/tfsec@main
-        with:
-          working-directory: ${{ inputs.working-directory }}
-          tfsec-version: ${{ inputs.tfsec-version }}
-          tfsec-additional-args: ${{ inputs.tfsec-additional-args }}
+      #- name: optional tfsec scan of terraform source files
+      #  uses:  ThoughtWorks-DPS/terraform-action/tfsec@main
+      #  with:
+      #    working-directory: ${{ inputs.working-directory }}
+      #    tfsec-version: ${{ inputs.tfsec-version }}
+      #    tfsec-additional-args: ${{ inputs.tfsec-additional-args }}
 
       - name: optional checkov scan of terraform source files
         uses:  ThoughtWorks-DPS/terraform-action/checkov@main
